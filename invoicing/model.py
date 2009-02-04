@@ -34,7 +34,7 @@ class Client(Entity):
     vat_number = Field(String)
     invoices = OneToMany('Invoice')
     group = ManyToOne('ClientGroup')
-    #number_invoices = ColumnProperty(lambda c: len([invoice for invoice in c.invoices if invoice.created.year==datetime.today().year]))
+    number_invoices = ColumnProperty(select([func.count(invoices if invoice.created.year==datetime.today().year]))
     #next_invoice_ident = ColumnProperty(lambda c: c.abreveated + '-' + datetime.now().strftime("%Y") + '-' + str(c.number_invoices))
 
 class Product(Entity):
