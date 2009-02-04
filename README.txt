@@ -1,45 +1,49 @@
-Invoicing
+h1. Invoicing
 
-First class objects
-===================
+h2. First class objects
 
-* Invoices
-* Clients
-* Products
-* Users
-* Companies
+# Invoices
+# Clients
+# Products
+# Users
+# Companies
 
-Second level objects
---------------------
+h3. Second level objects
 
-* Proforma (optional) - converts to an invoice
-* Recurring product (e.g. hosting) - set recurrance interval (monthly, by-monthly, yearly)
-* Groups of clients - "External web development" (optional)
+# Proforma (optional) - converts to an invoice
+# Recurring product (e.g. hosting) - set recurrance interval (monthly, by-monthly, yearly)
+# Groups of clients - "External web development" (optional)
 
 
-Invoices
-========
+h2. Invoices
 
-Assigned to a client
-Contain products with prices
-VAT summary
-Standard configurable template (in standard markup - e.g. reStructuredText etc.)
+# Assigned to a client
+# Contain products with prices
+# VAT summary
+# Standard configurable template (in standard markup - e.g. reStructuredText etc.)
 
 
 
-Users
-=====
+h2. Users
 
-Proporta employees - authenticate with IMAP server (future with LDAP)
-Email address
-Assigned to a company
+# Proporta employees - authenticate with IMAP server (future with LDAP)
+# Email address
+# Assigned to a company
 
 
-Companies
-=========
+h2. Companies
 
-Assigned employees
-Company logo (on invoice template)
-Company name
-Company address
-Company VAT number (required)
+# Assigned employees
+# Company logo (on invoice template)
+# Company name
+# Company address
+# Company VAT number (required)
+
+
+h2. Improve...
+
+# Widgets for commonly occuring displayed data
+# Off-page accordion menu thing
+# Company logo in the header
+# IMAP login
+ 
