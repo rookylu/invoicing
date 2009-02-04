@@ -1,27 +1,66 @@
 from datetime import datetime
+from datetime import date
 import pkg_resources
 pkg_resources.require("SQLAlchemy>=0.3.10")
 pkg_resources.require("Elixir>=0.4.0")
 # import the basic Elixir classes and functions for declaring the data model
 # (see http://elixir.ematia.de/trac/wiki/TutorialDivingIn)
-from elixir import Entity, Field, OneToMany, ManyToOne, ManyToMany
+from elixir import Entity, Field, OneToMany, ManyToOne, ManyToMany, ColumnProperty
 from elixir import options_defaults, using_options, setup_all
 # import some datatypes for table columns from Elixir
 # (see http://www.sqlalchemy.org/docs/04/types.html for more)
-from elixir import String, Unicode, Integer, DateTime
+from elixir import String, Unicode, Integer, DateTime, Numeric
 from turbogears import identity
 
 options_defaults['autosetup'] = False
 
+class Invoice(Entity):
+    ident = Field(String, unique=True) # unique?
+    created = Field(DateTime, default=datetime.now)
+    paid = Field(DateTime, default=None)
+    terms = Field(String, default="30 days")
+    #status = Field # Don't know about Enum yet, might have to use own type
+    client = ManyToOne('Client') # and OneToMany('Invoice') in Client class
+    vat_rate = Field(Numeric(precision=3, scale=1)) # scale?
+    vat = Field(Numeric)
 
-# your data model
+    products = ManyToMany('Product')
 
-# class YourDataClass(Entity):
-#     pass
+class Client(Entity):
+    name = Field(String, unique=True)
+    abreveated = Field(String(2), unique=True)
+    address = Field(Unicode)
+    country = Field(Unicode)
+    vat_number = Field(String)
+    invoices = OneToMany('Invoice')
+    group = ManyToOne('ClientGroup')
+    #number_invoices = ColumnProperty(lambda c: len([invoice for invoice in c.invoices if invoice.created.year==datetime.today().year]))
+    #next_invoice_ident = ColumnProperty(lambda c: c.abreveated + '-' + datetime.now().strftime("%Y") + '-' + str(c.number_invoices))
 
+class Product(Entity):
+    name = Field(Unicode, unique=True)
+    price = Field(Numeric)
+    invoices = ManyToMany('Invoice')
+    
 
-# the identity model
+class VATRate(Entity):
+    name = Field(String, default="Standard Rate")
+    vat_rate = Field(Numeric(precision=3, scale=1), default=1.175)
+    effective_from = Field(DateTime, default=date(1970,1,1),unique=True)
+    effective_to = Field(DateTime, default=date(2999,12,1))
 
+class Company(Entity):
+    name = Field(Unicode, unique=True)
+    logo = Field(String)
+    address = Field(Unicode)
+    vat_number = Field(String)
+    users = OneToMany('User')
+    client_groups = OneToMany('ClientGroup')
+
+class ClientGroup(Entity):
+    name = Field(Unicode, unique=True)
+    company = ManyToOne('Company')
+    clients = OneToMany('Client')
 
 class Visit(Entity):
     """
@@ -84,6 +123,7 @@ class User(Entity):
         return p
     permissions = property(permissions)
 
+    company = ManyToOne('Company')
 
 class Permission(Entity):
     """
