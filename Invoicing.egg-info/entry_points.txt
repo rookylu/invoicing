@@ -1,0 +1,3 @@
+[console_scripts]
+start-invoicing = invoicing.commands:start
+
