@@ -1,5 +1,6 @@
 from datetime import datetime
 from datetime import date
+from turbogears.database import metadata, session
 import pkg_resources
 pkg_resources.require("SQLAlchemy>=0.3.10")
 pkg_resources.require("Elixir>=0.4.0")
@@ -11,10 +12,12 @@ from elixir import options_defaults, using_options, setup_all
 # (see http://www.sqlalchemy.org/docs/04/types.html for more)
 from elixir import String, Unicode, Integer, DateTime, Numeric
 from turbogears import identity
+from sqlalchemy.sql.expression import func, and_
 
 options_defaults['autosetup'] = False
 
 class Invoice(Entity):
+    using_options(tablename="invoice")
     ident = Field(String, unique=True) # unique?
     created = Field(DateTime, default=datetime.now)
     paid = Field(DateTime, default=None)
@@ -27,6 +30,7 @@ class Invoice(Entity):
     products = ManyToMany('Product')
 
 class Client(Entity):
+    using_options(tablename="client")
     name = Field(String, unique=True)
     abreveated = Field(String(2), unique=True)
     address = Field(Unicode)
@@ -34,22 +38,44 @@ class Client(Entity):
     vat_number = Field(String)
     invoices = OneToMany('Invoice')
     group = ManyToOne('ClientGroup')
-    number_invoices = ColumnProperty(select([func.count(invoices if invoice.created.year==datetime.today().year]))
-    #next_invoice_ident = ColumnProperty(lambda c: c.abreveated + '-' + datetime.now().strftime("%Y") + '-' + str(c.number_invoices))
+    full_address = ColumnProperty(lambda c: c.name + c.abreveated)
+    #number_invoices = ColumnProperty(session.query(Invoice).filter(Invoice.created.year==datetime.today().year))
+    #number_invoices = ColumnProperty(lambda c: func.count(session.query(Invoice).count()))
+    #next_invoice = ColumnProperty(lambda c: func.ifnull(session.query(Invoice).count()+1,1))
+    #next_invoice_ident = ColumnProperty(lambda c: c.abreveated+'-'+datetime.now().strftime("%Y")+'-'+"%02i" % Invoice.get(1).next_invoice)
+
+    @property
+    def invoices_this_year(self):
+        from_date = date(datetime.today().year, 1, 1)
+        print from_date
+        to_date = date(datetime.today().year+1, 1, 1)
+        print to_date
+        return Invoice.query.filter(and_(
+                                    Invoice.client == self,
+                                    Invoice.created >= from_date,
+                                    Invoice.created < to_date))
+
+    @property
+    def next_invoice_ident(self):
+        num = self.invoices_this_year.count() + 1
+        return "-".join(map(str,[self.abreveated, datetime.today().year, "%02i" % num]))
 
 class Product(Entity):
+    using_options(tablename="product")
     name = Field(Unicode, unique=True)
     price = Field(Numeric)
     invoices = ManyToMany('Invoice')
     
 
 class VATRate(Entity):
+    using_options(tablename="vat_rate")
     name = Field(String, default="Standard Rate")
     vat_rate = Field(Numeric(precision=3, scale=1), default=1.175)
     effective_from = Field(DateTime, default=date(1970,1,1),unique=True)
     effective_to = Field(DateTime, default=date(2999,12,1))
 
 class Company(Entity):
+    using_options(tablename="company")
     name = Field(Unicode, unique=True)
     logo = Field(String)
     address = Field(Unicode)
@@ -58,6 +84,7 @@ class Company(Entity):
     client_groups = OneToMany('ClientGroup')
 
 class ClientGroup(Entity):
+    using_options(tablename="client_group")
     name = Field(Unicode, unique=True)
     company = ManyToOne('Company')
     clients = OneToMany('Client')
