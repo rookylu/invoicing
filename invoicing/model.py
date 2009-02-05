@@ -13,16 +13,18 @@ from elixir import options_defaults, using_options, setup_all
 from elixir import String, Unicode, Integer, DateTime, Numeric
 from turbogears import identity
 from sqlalchemy.sql.expression import func, and_
+from invoicing.model_types import Enum
 
 options_defaults['autosetup'] = False
 
 class Invoice(Entity):
     using_options(tablename="invoice")
-    ident = Field(String, unique=True) # unique?
+    ident = Field(String, unique=True)
     created = Field(DateTime, default=datetime.now)
+    date = Field(DateTime, nullable=False)
     paid = Field(DateTime, default=None)
     terms = Field(String, default="30 days")
-    #status = Field # Don't know about Enum yet, might have to use own type
+    status = Field(Enum(["Proforma","Invoice","Calcelled"])) # Don't know about Enum yet, might have to use own type
     client = ManyToOne('Client') # and OneToMany('Invoice') in Client class
     vat_rate = Field(Numeric(precision=3, scale=1)) # scale?
     vat = Field(Numeric)
@@ -36,13 +38,10 @@ class Client(Entity):
     address = Field(Unicode)
     country = Field(Unicode)
     vat_number = Field(String)
+    email_address = Field(Unicode(255), unique=True)
     invoices = OneToMany('Invoice')
     group = ManyToOne('ClientGroup')
     full_address = ColumnProperty(lambda c: c.name + c.abreveated)
-    #number_invoices = ColumnProperty(session.query(Invoice).filter(Invoice.created.year==datetime.today().year))
-    #number_invoices = ColumnProperty(lambda c: func.count(session.query(Invoice).count()))
-    #next_invoice = ColumnProperty(lambda c: func.ifnull(session.query(Invoice).count()+1,1))
-    #next_invoice_ident = ColumnProperty(lambda c: c.abreveated+'-'+datetime.now().strftime("%Y")+'-'+"%02i" % Invoice.get(1).next_invoice)
 
     @property
     def invoices_this_year(self):
@@ -65,7 +64,6 @@ class Product(Entity):
     name = Field(Unicode, unique=True)
     price = Field(Numeric)
     invoices = ManyToMany('Invoice')
-    
 
 class VATRate(Entity):
     using_options(tablename="vat_rate")
