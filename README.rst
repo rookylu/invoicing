@@ -30,7 +30,7 @@ Invoices
 Users
 -----
 
-* Proporta employees - authenticate with IMAP server (future with LDAP)
+* Authenticate with IMAP server (future with LDAP)
 * Email address
 * Assigned to a company
 
