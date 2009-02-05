@@ -1,8 +1,9 @@
 import turbogears as tg
-from turbogears import controllers, expose, flash
-from turbogears import identity, redirect
+from turbogears import controllers, expose, flash, error_handler
+from turbogears import identity, redirect, validate
 from turbogears.database import session
 from turbogears.widgets import DataGrid
+import turbogears
 from cherrypy import request, response
 from invoicing import json
 import logging
@@ -54,7 +55,7 @@ class Root(controllers.RootController):
         
         self.company_table = DataGrid(fields=[
             ('Name','name'),
-            ('Logo', self.company_logo),
+            #('Logo', self.company_logo),
             ('Address', 'address'),
             ('VAT number', 'vat_number'),
             ('Users', self.company_users)
@@ -96,12 +97,24 @@ class Root(controllers.RootController):
             ('Status', 'status'),
             ('Created on', 'created'),
             ('Date', 'date'),
+            ('Sent on', 'date_sent'),
             ('Paid on', 'paid'),
             ('Products', self.print_products)
             ])
+
+        self.menu_items = [["Clients",("All Clients","/clients"),("New Client","/add_client")],
+                           ["Invoices",("All Invoices","/invoices"),("New Invoice","/new_invoice")]]
+        turbogears.view.variable_providers.append(self.add_custom_stdvars)
+
+    @expose(template='.templates.menu')
+    def get_menu(self):
+        return dict(menu_items=self.menu_items)
+
+    def add_custom_stdvars(self,vars):
+        return vars.update({"get_menu": self.get_menu})
     
     @expose(template="invoicing.templates.welcome")
-    # @identity.require(identity.in_group("admin"))
+    @identity.require(identity.in_group("admin"))
     def index(self):
         rates=self.vat_rates_table.display(session.query(model.VATRate))
         companies=self.company_table.display(session.query(model.Company))
@@ -110,20 +123,34 @@ class Root(controllers.RootController):
         clients=self.client_table.display(session.query(model.Client))
         products=self.product_table.display(session.query(model.Product))
         invoices=self.invoice_table.display(session.query(model.Invoice))
-        #client_form=ClientFields(session.query(model.ClientGroup))
-        client_form = forms.TableForm(
-            #fields=ClientFields(session.query(model.ClientGroup)),
-            fields=ClientFields(),
-            action="save"
-            )
+        
         return dict(rates=rates,
                     companies=companies,
                     users=users,
                     groups=groups,
                     clients=clients,
                     products=products,
-                    invoices=invoices,
-                    client_form=client_form)
+                    invoices=invoices)
+
+    @expose(template='.templates.add_client')
+    def add_client(self, tg_errors=None):
+        if tg_errors:
+            flash('There were problems with the data submitted!')
+        return dict(client_form=client_form)
+
+    @expose()
+    @validate(form=client_form)
+    @error_handler(add_client)
+    def save_client(self, **data):
+        client = model.Client(name=data['name'],
+                              abbreveated=data['abbreveated'],
+                              address=data['address'],
+                              country=data['country'],
+                              vat_number=data['vat_number'],
+                              email_address=data['email_address'],
+                              client_group=data['client_group'])
+        client.flush()
+        redirect('/')
 
     @expose(template="invoicing.templates.login")
     def login(self, forward_url=None, *args, **kw):
