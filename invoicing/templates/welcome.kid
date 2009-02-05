@@ -16,8 +16,7 @@
     ${users}
     <h3>Groups</h3>
     ${groups}
-    <h3>Clients</h3>
-    <h4>New client:</h4> ${client_form.display()}
+    <h3>Clients</h3> <a href="/add_client">Add</a>
     ${clients}
     <h3>Products</h3>
     ${products}
