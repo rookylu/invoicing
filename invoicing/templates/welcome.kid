@@ -17,9 +17,12 @@
     <h3>Groups</h3>
     ${groups}
     <h3>Clients</h3>
+    <h4>New client:</h4> ${client_form.display()}
     ${clients}
     <h3>Products</h3>
     ${products}
+    <h3>Invoices</h3>
+    ${invoices}
   </div>
 </body>
 </html>

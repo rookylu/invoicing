@@ -4,10 +4,11 @@ from turbogears import identity, redirect
 from turbogears.database import session
 from turbogears.widgets import DataGrid
 from cherrypy import request, response
-# from invoicing import json
+from invoicing import json
 import logging
 log = logging.getLogger("invoicing.controllers")
 from invoicing import model
+from invoicing.widgets import *
 from kid import XML
 
 class Root(controllers.RootController):
@@ -31,6 +32,10 @@ class Root(controllers.RootController):
             invoices.append("<a href=\"/invoice/%i\">%s</a>" % (invoice.id, invoice.ident))
         invoices = "<br />".join(invoices)
         return XML(invoices)
+
+    def print_products(self, parent):
+        products = "<br />".join(["<a href=\"/product/%s\">%s</a>" % (product.id, product.name) for product in parent.products])
+        return XML(products)
 
     def group_users(self, group):
         users = []
@@ -90,25 +95,35 @@ class Root(controllers.RootController):
             ('Client', 'client.name'),
             ('Status', 'status'),
             ('Created on', 'created'),
-            ('Paid on', 'paid')
+            ('Date', 'date'),
+            ('Paid on', 'paid'),
+            ('Products', self.print_products)
             ])
     
     @expose(template="invoicing.templates.welcome")
     # @identity.require(identity.in_group("admin"))
     def index(self):
-        import time
         rates=self.vat_rates_table.display(session.query(model.VATRate))
         companies=self.company_table.display(session.query(model.Company))
         users=self.user_table.display(session.query(model.User))
         groups=self.group_table.display(session.query(model.Group))
         clients=self.client_table.display(session.query(model.Client))
         products=self.product_table.display(session.query(model.Product))
+        invoices=self.invoice_table.display(session.query(model.Invoice))
+        #client_form=ClientFields(session.query(model.ClientGroup))
+        client_form = forms.TableForm(
+            #fields=ClientFields(session.query(model.ClientGroup)),
+            fields=ClientFields(),
+            action="save"
+            )
         return dict(rates=rates,
                     companies=companies,
                     users=users,
                     groups=groups,
                     clients=clients,
-                    products=products)
+                    products=products,
+                    invoices=invoices,
+                    client_form=client_form)
 
     @expose(template="invoicing.templates.login")
     def login(self, forward_url=None, *args, **kw):
