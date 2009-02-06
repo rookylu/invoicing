@@ -1,3 +1,6 @@
+#!/usr/bin/python
+# -*- coding: iso-8859-15
+
 import turbogears as tg
 from turbogears import controllers, expose, flash, error_handler
 from turbogears import identity, redirect, validate
@@ -35,7 +38,7 @@ class Root(controllers.RootController):
         return XML(invoices)
 
     def print_products(self, parent):
-        products = "<br />".join(["<a href=\"/product/%s\">%s</a>" % (product.id, product.name) for product in parent.products])
+        products = "<br />".join(["<a href=\"/product/%s\">%s</a>" % (line.product.id, line.product.name) for line in parent.products])
         return XML(products)
 
     def group_users(self, group):
@@ -103,15 +106,33 @@ class Root(controllers.RootController):
             ])
 
         self.menu_items = [["Clients",("All Clients","/clients"),("New Client","/add_client")],
-                           ["Invoices",("All Invoices","/invoices"),("New Invoice","/new_invoice")]]
+                           ["Invoices",("All Invoices","/invoices"),("New Invoice","/new_invoice")],
+                           ["Products", ("All Products","/products"),("New Product","/new_product")],
+                           ["Admin",("VAT Rates","/vat_rates"),("Companies","/companies"),("Users","/users"),("Groups","/groups")]]
         turbogears.view.variable_providers.append(self.add_custom_stdvars)
 
     @expose(template='.templates.menu')
     def get_menu(self):
         return dict(menu_items=self.menu_items)
 
+    def format_address(self, address):
+        return XML(address.replace(',',',<br />'))
+
+    def format_date(self, date):
+        return date.strftime('%d %B %Y')
+
+    def format_percentage(self, amount):
+        return "%.2f%%" % (amount*100)
+
+    def format_money(self, price):
+        return u"£%.2f" % (price)
+
     def add_custom_stdvars(self,vars):
-        return vars.update({"get_menu": self.get_menu})
+        return vars.update({"get_menu": self.get_menu,
+                            'format_address': self.format_address,
+                            'format_date': self.format_date,
+                            'format_money': self.format_money,
+                            'format_percentage': self.format_percentage})
     
     @expose(template="invoicing.templates.welcome")
     @identity.require(identity.in_group("admin"))
@@ -131,6 +152,12 @@ class Root(controllers.RootController):
                     clients=clients,
                     products=products,
                     invoices=invoices)
+
+    @expose(template='.templates.invoice')
+    @identity.require(identity.in_group("admin"))
+    def invoice(self, invoice_id=None):
+        invoice = model.Invoice.get(invoice_id)
+        return dict(invoice=invoice)
 
     @expose(template='.templates.add_client')
     def add_client(self, tg_errors=None):
