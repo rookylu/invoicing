@@ -33,8 +33,15 @@
 
     <div id="header">
       <div py:if="tg.config('identity.on') and not defined('loggin_in')">
-	<div py:if="not tg.identity.anonymous">
-	  <img src="${tg.url('/static/images/companies/'+tg.identity.user.company.logo)}" />
+	<div py:if="not tg.identity.anonymous" id="company">
+	  <div class="company_logo">
+	    <a href="${tg.url('/')}"><img src="${tg.url('/static/images/companies/'+tg.identity.user.company.logo)}" /></a>
+	  </div>
+	  <div class="company_details">
+	    <h4 py:content="tg.identity.user.company.name"></h4>
+	    <p py:content="tg.format_address(tg.identity.user.company.address)"></p>
+	  </div>
+	  <div style="clear: both"></div>
 	</div>
       </div>
     </div>

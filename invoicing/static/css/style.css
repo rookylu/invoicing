@@ -15,6 +15,10 @@ tr th {text-align:left;background-color:#f0f0f0;color:#333;}
 tr.odd td {background-color:#edf3fe;}
 tr.even td {background-color:#fff;}
 
+a img {
+    border: 0;
+}
+
 #header {
   min-height: 80px;
   /*width: 777px;*/
@@ -23,9 +27,44 @@ tr.even td {background-color:#fff;}
   border-left: 1px solid #aaa;
   border-right: 1px solid #aaa;
   border-top: 1px solid #aaa;
+  border-bottom: 2px dashed #aaa;
   margin: 0 auto 0 auto;
   margin-left: 172px;
   margin-right:20px;
+}
+
+#company {
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+}
+
+.company_logo {
+    float: left;
+    width: 50%;
+}
+
+.company_details {
+    float: right;
+    /*width: 50%;*/
+    text-align: left;
+    padding-right: 20px;
+}
+
+.company_details h4, .company_details p {
+    text-align: left;
+}
+
+table.products {
+    width: 80%;
+}
+
+.products td, .products th, .products tr {
+    border: 1px #aaa;
+}
+
+.right {
+    text-align: right;
 }
 
 a.link, a, a.active {
@@ -39,22 +78,23 @@ a.link, a, a.active {
   background-color: white;
   /*width: 757px;*/
   margin: 0 auto 0 auto;
-  border-left: 1px solid #aaa;
-  border-right: 1px solid #aaa;
+  border-left: 2px dashed #aaa;
+  border-right: 2px dashed #aaa;
   padding: 10px;
   margin-left: 172px;
   margin-right:20px;
 }
 
 #sidebar {
-  border-left: 1px solid #aaa;
   background-color: #eee;
   margin: 0.5em;
+  margin-top: 0px;
   padding: 0em;
   float: left;
   width: 152px;
   font-size: 88%;
   margin-left: 20px;
+  border-right: 2px solid #fff;
 }
 
 #sidebar h2 {
@@ -66,24 +106,33 @@ a.link, a, a.active {
   padding-left: 0;
 }
 
+#menu {
+    margin-top: -2px;
+    border-top: 2px dashed #aaa;
+    border-left: 2px dashed #aaa;
+    border-bottom: 2px dashed #aaa;
+    padding: 1px;
+}
+
 #menu a {
     display:block;
     text-decoration: none;
 }
 
 #menu h4 {
-    padding-left: 5px;
-    padding-right: 5px;
-    border-top: 1px solid #aaa;
-    border-bottom: 1px solid #aaa;
+    /*padding-left: 5px;
+    padding-right: 5px;/*
+    /*border-top: 1px solid #aaa;
+    border-bottom: 1px solid #aaa;*/
     margin: 0px;
     font-size: 1.7em;
     font-weight: bold;
-    background: #aaa;
+    background: #fff;
 }
 
 #menu h4:hover {
-    background: #42df93;
+    /*background: #42df93;*/
+    background: #B2D237;
 }
 
 #menu ul {
@@ -139,7 +188,7 @@ h2 {
 
 #footer {
   border: 1px solid #aaa;
-  border-top: 0px none;
+  border-top: 2px dashed #aaa;
   color: #999;
   background-color: white;
   padding: 10px;
@@ -147,7 +196,7 @@ h2 {
   text-align: center;
   /*width: 757px;*/
   margin: 0 auto 1em auto;
-  margin-left: 1722px;
+  margin-left: 172px;
   margin-right: 20px;
 }
 
