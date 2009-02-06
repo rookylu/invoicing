@@ -17,6 +17,7 @@
     </style>
     <link rel="stylesheet" type="text/css" media="screen" href="../static/css/style.css"
         py:attrs="href=tg.url('/static/css/style.css')"/>
+    <script language="javascript" src="${tg.url('/static/javascript/menu.js')}"></script>
 </head>
 
 <body py:match="item.tag=='{http://www.w3.org/1999/xhtml}body'" py:attrs="item.items()">
@@ -30,8 +31,14 @@
         </span>
     </div>
 
-    <div id="header">&#160;</div>
-
+    <div id="header">
+      <div py:if="tg.config('identity.on') and not defined('loggin_in')">
+	<div py:if="not tg.identity.anonymous">
+	  <img src="${tg.url('/static/images/companies/'+tg.identity.user.company.logo)}" />
+	</div>
+      </div>
+    </div>
+    <div id="sidebar" py:content="XML(tg.get_menu())">Here</div>
     <div id="main_content">
         <div id="status_block" class="flash"
             py:if="value_of('tg_flash', None)" py:content="tg_flash"></div>

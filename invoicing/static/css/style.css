@@ -16,12 +16,16 @@ tr.odd td {background-color:#edf3fe;}
 tr.even td {background-color:#fff;}
 
 #header {
-  height: 80px;
-  width: 777px;
-  background: blue URL('../images/header_inner.png') no-repeat;
+  min-height: 80px;
+  /*width: 777px;*/
+  background: #fff;
+  /*background: blue URL('../images/header_inner.png') no-repeat;*/
   border-left: 1px solid #aaa;
   border-right: 1px solid #aaa;
+  border-top: 1px solid #aaa;
   margin: 0 auto 0 auto;
+  margin-left: 172px;
+  margin-right:20px;
 }
 
 a.link, a, a.active {
@@ -33,21 +37,24 @@ a.link, a, a.active {
   color: black;
   font-size: 127%;
   background-color: white;
-  width: 757px;
+  /*width: 757px;*/
   margin: 0 auto 0 auto;
   border-left: 1px solid #aaa;
   border-right: 1px solid #aaa;
   padding: 10px;
+  margin-left: 172px;
+  margin-right:20px;
 }
 
 #sidebar {
-  border: 1px solid #aaa;
+  border-left: 1px solid #aaa;
   background-color: #eee;
   margin: 0.5em;
-  padding: 1em;
-  float: right;
-  width: 200px;
+  padding: 0em;
+  float: left;
+  width: 152px;
   font-size: 88%;
+  margin-left: 20px;
 }
 
 #sidebar h2 {
@@ -57,6 +64,47 @@ a.link, a, a.active {
 #sidebar ul {
   margin-left: 1.5em;
   padding-left: 0;
+}
+
+#menu a {
+    display:block;
+    text-decoration: none;
+}
+
+#menu h4 {
+    padding-left: 5px;
+    padding-right: 5px;
+    border-top: 1px solid #aaa;
+    border-bottom: 1px solid #aaa;
+    margin: 0px;
+    font-size: 1.7em;
+    font-weight: bold;
+    background: #aaa;
+}
+
+#menu h4:hover {
+    background: #42df93;
+}
+
+#menu ul {
+    list-style: none;
+    margin: 0px;
+    padding: 0px;
+}
+
+#menu ul li {
+    display: block;
+    font-size: 1.3em;
+    font-weight: bold;
+}
+
+#menu ul li:hover {
+    background: #e3a520;
+}
+
+#menu ul li a {
+    padding-left: 5px;
+    padding-right: 5px;
 }
 
 h1,h2,h3,h4,h5,h6,#getting_started_steps {
@@ -97,8 +145,10 @@ h2 {
   padding: 10px;
   font-size: 80%;
   text-align: center;
-  width: 757px;
+  /*width: 757px;*/
   margin: 0 auto 1em auto;
+  margin-left: 1722px;
+  margin-right: 20px;
 }
 
 .code {
