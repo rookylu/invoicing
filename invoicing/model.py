@@ -60,7 +60,7 @@ class Client(Entity):
     @property
     def next_invoice_ident(self):
         num = self.invoices_this_year.count() + 1
-        return "-".join(map(str,[self.abbreveated, datetime.today().year, "%02i" % num]))
+        return self.abbreveated + str(datetime.today().year) + '-' + "%02i" % num
 
 class Product(Entity):
     using_options(tablename="product")
