@@ -10,9 +10,10 @@ from elixir import Entity, Field, OneToMany, ManyToOne, ManyToMany, ColumnProper
 from elixir import options_defaults, using_options, setup_all
 # import some datatypes for table columns from Elixir
 # (see http://www.sqlalchemy.org/docs/04/types.html for more)
-from elixir import String, Unicode, Integer, DateTime, Numeric
+from elixir import String, Unicode, Integer, DateTime, Numeric, using_table_options
 from turbogears import identity
 from sqlalchemy.sql.expression import func, and_
+from sqlalchemy import UniqueConstraint
 from invoicing.model_types import Enum
 
 options_defaults['autosetup'] = False
@@ -25,19 +26,70 @@ class Invoice(Entity):
     date_sent = Field(DateTime)
     paid = Field(DateTime, default=None)
     terms = Field(String, default="30 days")
-    status = Field(Enum(["Proforma","Invoice","Calcelled"])) # Don't know about Enum yet, might have to use own type
+    status = Field(Enum(["Proforma","Invoice","Cancelled"])) # Don't know about Enum yet, might have to use own type
     client = ManyToOne('Client') # and OneToMany('Invoice') in Client class
     vat_rate = Field(Numeric(precision=3, scale=1)) # scale?
     vat = Field(Numeric)
     next_invoice = OneToOne('Invoice', inverse='previous_invoice')
     previous_invoice = ManyToOne('Invoice', inverse='next_invoice')
 
-    products = ManyToMany('Product')
+    products = OneToMany('InvoiceLine')
+
+    @property
+    def hasPrevious(self):
+        return self.previous_invoice != None
+
+    @property
+    def hasNext(self):
+        return self.next_invoice != None
+
+    @property
+    def number_of_lines(self):
+        return len(products)
+
+    @property
+    def total(self):
+        total = 0.0
+        for line in self.products:
+            total += line.total
+        return total
+
+    @property
+    def vat(self):
+        vat = self.total * float(self.vat_rate)
+        return vat
+
+    @property
+    def net_total(self):
+        return self.vat + self.total
+
+    def add_product(self, product=None, quantity=0, price=0.0):
+        invoice_line = InvoiceLine(invoice=self,
+                                   product=product,
+                                   price=price,
+                                   quantity=quantity)
+        self.products.append(invoice_line)
+        self.flush()
+
+class InvoiceLine(Entity):
+    invoice = ManyToOne('Invoice')
+    product = ManyToOne('Product')
+    price = Field(Numeric)
+    quantity = Field(Integer, default=1)
+    total = ColumnProperty(lambda c: c.quantity * c.price)
+    using_table_options(UniqueConstraint('invoice_id', 'product_id'))
+    using_options(tablename="invoice_line")
+
+    @property
+    def vat(self):
+        return self.invoice.vat_rate.vat_rate * self.total
 
 class Client(Entity):
     using_options(tablename="client")
     name = Field(String, unique=True)
     abbreveated = Field(String(2), unique=True)
+    billing_person = Field(Unicode)
+    phone_number = Field(Unicode)
     address = Field(Unicode)
     country = Field(Unicode)
     vat_number = Field(String)
@@ -71,14 +123,22 @@ class Product(Entity):
 class VATRate(Entity):
     using_options(tablename="vat_rate")
     name = Field(String, default="Standard Rate")
-    vat_rate = Field(Numeric(precision=3, scale=1), default=1.175)
+    vat_rate = Field(Numeric(precision=3, scale=1), default=0.175)
     effective_from = Field(DateTime, default=date(1970,1,1),unique=True)
     effective_to = Field(DateTime, default=date(2999,12,1))
+
+    def getVATRate(self, date):
+        rate = VATRate.query.filter(and_(VATRate.effective_from <= date, VATRate.effective_to >= date)).one()
+        return rate
+    get_vat_rate = classmethod(getVATRate)
 
 class Company(Entity):
     using_options(tablename="company")
     name = Field(Unicode, unique=True)
     logo = Field(String)
+    phone_number = Field(Unicode)
+    email_address = Field(Unicode, unique=True)
+    url = Field(String, default=None)
     address = Field(Unicode)
     vat_number = Field(String)
     users = OneToMany('User')
