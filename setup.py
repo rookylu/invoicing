@@ -44,7 +44,7 @@ setup(
         # 'turbogears.command',
 
         # if this has identity providers, uncomment the next line
-        # 'turbogears.identity.provider',
+        'turbogears.identity.provider',
 
         # If this is a template plugin, uncomment the next line
         # 'python.templating.engines',
@@ -68,9 +68,12 @@ setup(
     ],
     test_suite='nose.collector',
     entry_points = {
-        'console_scripts': [
-            'start-invoicing = invoicing.commands:start',
-        ],
+    	'console_scripts': [
+    		'start-invoicing = invoicing.commands:start',
+    	],
+    	'turbogears.identity.provider': [
+    		'imapsa = invoicing.identity:ImapSqlAlchemyIdentityProvider',
+    	]
     },
     # Uncomment next line and create a default.cfg file in your project dir
     # if you want to package a default configuration in your egg.

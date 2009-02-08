@@ -1,3 +1,6 @@
 [console_scripts]
 start-invoicing = invoicing.commands:start
 
+[turbogears.identity.provider]
+imapsa = invoicing.identity:ImapSqlAlchemyIdentityProvider
+
