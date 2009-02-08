@@ -26,16 +26,20 @@ function menuHeader(header) {
 
 function menuConnector(idx) {
     var a_link = getFirstElementByTagAndClassName("a", null, headers[idx]);
-    debug("a_links: ", a_link);
+    //debug("a_links: ", a_link);
     connect(a_link, "onclick", partial(function(idx,event) {
 	event.preventDefault();
 	var target = event.target();
-	debug("Event: ", event.target());
+	var options = {duration: 0.5, transition: MochiKit.Visual.Transitions.linear}
+	//debug("Event: ", event.target());
 	for (var sub in submenus) {
+	    var style = getNodeAttribute(submenus[sub],'style');
+	    style = style.replace(" ","");
+	    var displayTest = /display:none/;
 	    if (idx == sub)
-		slideDown(submenus[sub]);
-	    else
-		slideUp(submenus[sub]);
+		blindDown(submenus[sub], options);
+	    else if ((style != null) && (!displayTest.test(style)))
+		blindUp(submenus[sub], options);
 	}
     },idx));
 }

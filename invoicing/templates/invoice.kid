@@ -40,5 +40,8 @@
     </table>
     <p>Payment Term: ${invoice.terms}</p>
   </div>
+  <div id="footer">
+    
+  </div>
 </body>
 </html>

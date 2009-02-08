@@ -10,10 +10,12 @@ html, body {
   padding: 0;
 }
 
-td, th {padding:3px;border:none;}
+td, th {padding:3px;border:1px solid #000;}
 tr th {text-align:left;background-color:#f0f0f0;color:#333;}
-tr.odd td {background-color:#edf3fe;}
+tr.odd td {background-color:#C1E3F3;}
 tr.even td {background-color:#fff;}
+tr:hover td, tr.over td { background-color: #eee; }
+table { border-collapse: collapse; }
 
 a img {
     border: 0;
@@ -57,10 +59,6 @@ a img {
 
 table.products {
     width: 80%;
-}
-
-.products td, .products th, .products tr {
-    border: 1px #aaa;
 }
 
 .right {

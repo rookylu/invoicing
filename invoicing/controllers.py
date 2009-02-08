@@ -3,7 +3,7 @@
 
 import turbogears as tg
 from turbogears import controllers, expose, flash, error_handler
-from turbogears import identity, redirect, validate
+from turbogears import identity, redirect, validate, config
 from turbogears.database import session
 from turbogears.widgets import DataGrid
 import turbogears
@@ -13,6 +13,9 @@ import logging
 log = logging.getLogger("invoicing.controllers")
 from invoicing import model
 from invoicing.widgets import *
+import os
+import os.path
+from docutils.core import publish_string
 from kid import XML
 
 class Root(controllers.RootController):
@@ -31,14 +34,20 @@ class Root(controllers.RootController):
         return XML(user_line)
 
     def print_invoices(self, parent):
-        invoices = []
-        for invoice in parent.invoices:
-            invoices.append("<a href=\"/invoice/%i\">%s</a>" % (invoice.id, invoice.ident))
+        if hasattr(parent, 'invoices'):
+            #invoices = ["<a href=\"/invoice/%i\">%s</a>" % (invoice.id, invoice.ident) for invoice in parent.invoices]
+            invoices = parent.invoices
+        else:
+            invoices = [parent.invoice for parent in parent.invoice_lines]
+        invoices = ["<a href=\"/invoice/%i\">%s</a>" % (invoice.id, invoice.ident) for invoice in invoices]
+        #for invoice in parent.invoices:
+        #    invoices.append("<a href=\"/invoice/%i\">%s</a>" % (invoice.id, invoice.ident))
         invoices = "<br />".join(invoices)
         return XML(invoices)
 
     def print_products(self, parent):
-        products = "<br />".join(["<a href=\"/product/%s\">%s</a>" % (line.product.id, line.product.name) for line in parent.products])
+        #products = "<br />".join(["<a href=\"/product/%s\">%s</a>" % (line.product.id, line.product.name) for line in parent.products])
+        products = ""
         return XML(products)
 
     def group_users(self, group):
@@ -48,6 +57,33 @@ class Root(controllers.RootController):
         users = "<br />".join(users)
         return XML(users)
 
+    def icon(self, link, image):
+        src=controllers.url(link)
+        img=controllers.url("/static/images/%s" % image)
+        log.debug(src)
+        return XML("<a href=\"%s\"><img src=\"%s\" /></a>" % (src, img))
+
+    def email_icon(self, obj):
+        url = "/%s/email/%i" % (obj.__class__.__name__.lower(), obj.id)
+        img_link = self.icon(url,"internet-mail.png")
+        log.debug(img_link)
+        return img_link
+
+    def delete_icon(self, obj):
+        url = "/%s/delete/%i" % (obj.__class__.__name__.lower(), obj.id)
+        img_link = self.icon(url,"dialog-cancel.png")
+        return img_link
+
+    def print_icon(self, obj):
+        url = "/%s/print/%i" % (obj.__class__.__name__.lower(), obj.id)
+        img_link = self.icon(url,"document-print.png")
+        return img_link
+
+    def edit_icon(self, obj):
+        url = "/%s/edit/%i" % (obj.__class__.__name__.lower(), obj.id)
+        img_link = self.icon(url,"edit.png")
+        return img_link
+    
     def __init__(self):
         self.vat_rates_table = DataGrid(fields=[
             ('Name', 'name'),
@@ -98,17 +134,26 @@ class Root(controllers.RootController):
             ('Ident', 'ident'),
             ('Client', 'client.name'),
             ('Status', 'status'),
-            ('Created on', 'created'),
-            ('Date', 'date'),
+            ('Created on', 'created_date'),
+            ('Date', 'invoice_date'),
             ('Sent on', 'date_sent'),
             ('Paid on', 'paid'),
-            ('Products', self.print_products)
-            ])
+            ('Num. Products', 'product_quantity'),
+            ('Edit', self.edit_icon),
+            ('Email', self.email_icon),
+            ('Print', self.print_icon),
+            ('Delete', self.delete_icon)
+            ], template='invoicing.templates.datagrid')
 
         self.menu_items = [["Clients",("All Clients","/clients"),("New Client","/add_client")],
                            ["Invoices",("All Invoices","/invoices"),("New Invoice","/new_invoice")],
                            ["Products", ("All Products","/products"),("New Product","/new_product")],
-                           ["Admin",("VAT Rates","/vat_rates"),("Companies","/companies"),("Users","/users"),("Groups","/groups")]]
+                           ["Admin",
+                            ("VAT Rates","/vat_rates"),
+                            ("Companies","/companies"),
+                            ("Users","/users"),
+                            ("Groups","/groups"),
+                            ("README","/readme")]]
         turbogears.view.variable_providers.append(self.add_custom_stdvars)
 
     @expose(template='.templates.menu')
@@ -152,6 +197,23 @@ class Root(controllers.RootController):
                     clients=clients,
                     products=products,
                     invoices=invoices)
+
+    @expose(template='.templates.readme')
+    @expose(template='.templates.iframe', as_format='iframe')
+    def readme(self):
+        file_to_read = config.get('invoicing.readme')
+        filefd = open(file_to_read, 'r')
+        readme = publish_string(
+            source=filefd.read(),
+            settings_overrides={'file_insertion_enabled': 0, 'raw_enabled': 0},
+            writer_name='html')
+        return dict(readme=readme)
+
+    @expose(template='.templates.invoices')
+    @identity.require(identity.in_group("admin"))
+    def invoices(self):
+        invoices=self.invoice_table.display(session.query(model.Invoice))
+        return dict(invoices=invoices)
 
     @expose(template='.templates.invoice')
     @identity.require(identity.in_group("admin"))

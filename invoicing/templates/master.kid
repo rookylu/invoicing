@@ -58,6 +58,9 @@
         <p>TurboGears is a open source front-to-back web development framework
             written in Python</p>
         <p>Copyright &#169; 2007 Kevin Dangoor</p>
+	<div py:if="not tg.identity.anonymous" class="right">
+	  <p>${tg.identity.user.company.phone_number}</p>
+	</div>
     </div>
 </body>
 

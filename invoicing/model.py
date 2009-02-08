@@ -32,8 +32,15 @@ class Invoice(Entity):
     vat = Field(Numeric)
     next_invoice = OneToOne('Invoice', inverse='previous_invoice')
     previous_invoice = ManyToOne('Invoice', inverse='next_invoice')
-
     products = OneToMany('InvoiceLine')
+
+    @property
+    def created_date(self):
+        return self.created.strftime("%d/%m/%Y")
+
+    @property
+    def invoice_date(self):
+        return self.date.strftime("%d/%m/%Y")
 
     @property
     def hasPrevious(self):
@@ -46,6 +53,13 @@ class Invoice(Entity):
     @property
     def number_of_lines(self):
         return len(products)
+
+    @property
+    def product_quantity(self):
+        num = 0
+        for line in self.products:
+            num += line.quantity
+        return num
 
     @property
     def total(self):
@@ -118,7 +132,10 @@ class Product(Entity):
     using_options(tablename="product")
     name = Field(Unicode, unique=True)
     price = Field(Numeric)
-    invoices = ManyToMany('Invoice')
+    details = Field(Unicode)
+    invoice_lines = OneToMany('InvoiceLine')
+    parent = ManyToOne('Product', inverse='children')
+    children = OneToMany('Product', inverse='parent')
 
 class VATRate(Entity):
     using_options(tablename="vat_rate")
