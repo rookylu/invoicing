@@ -15,7 +15,7 @@ Second level objects
 
 * Proforma (optional) - converts to an invoice
 * Recurring product (e.g. hosting) - set recurrance interval (monthly, by-monthly, yearly)
-* Groups of clients - "External web development" (optional)
+* Groups of clients - "External web development" (optional) - done.
 
 
 Invoices
@@ -30,7 +30,7 @@ Invoices
 Users
 -----
 
-* Authenticate with IMAP server (future with LDAP)
+* Authenticate with IMAP server (future with LDAP) - done.
 * Email address
 * Assigned to a company
 
@@ -47,8 +47,19 @@ Improve...
 ----------
 
 * Widgets for commonly occuring displayed data
-* Off-page accordion menu thing
-* Company logo in the header
-* IMAP login
-* Associated table for invoice lines - (product, price, quantity)
+* Off-page accordion menu thing - done
+* Company logo in the header - done
+* IMAP login - done
+* Associated table for invoice lines - (product, price, quantity) - done
  
+Funtionality to add
+-------------------
+
+* Add invoice form / Edit invoice
+* Add company form / Edit company
+* Add user form / Edit user
+* Add client form / Edit client
+* Add product parent (hierarchy of products) (e.g. "Hosting" -> "Hosting for www.example.com")
+* Link with invoice generator (PDF export)
+* Paginate all tablulated data
+* All tables sortable
