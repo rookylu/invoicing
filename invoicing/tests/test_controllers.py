@@ -1,8 +1,11 @@
 import unittest
 import turbogears
-from turbogears import testutil
+from turbogears import testutil, database
 from invoicing.controllers import Root
 import cherrypy
+from kid.element import Element
+
+#database.set_db_uri("sqlite:///../../devdata.sqlite")
 
 cherrypy.root = Root()
 
@@ -22,7 +25,8 @@ class TestPages(unittest.TestCase):
         "the index method should return a string called now"
         import types
         result = testutil.call(cherrypy.root.index)
-        assert type(result["now"]) == types.StringType
+        print "Type rates: %s" % type(result["rates"])
+        assert isinstance(result["rates"], Element)
 
     def test_indextitle(self):
         "The indexpage should have the right title"

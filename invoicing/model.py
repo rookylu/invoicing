@@ -1,3 +1,32 @@
+"""
+Invoicing Model module
+
+This contains all the class definitions necessary to persist Invoice data.
+
+:Classes:
+  Invoice
+
+  User
+
+  Group
+
+  InvoiceLine
+
+  Product
+
+  Client
+
+  Company
+
+  ClientGroup
+
+  VATRate
+
+  Visit
+
+  VisitIdentity
+"""
+
 from datetime import datetime
 from datetime import date
 from turbogears.database import metadata, session
@@ -19,6 +48,9 @@ from invoicing.model_types import Enum
 options_defaults['autosetup'] = False
 
 class Invoice(Entity):
+    """
+    Invoice object - contains all info relevant to an invoice
+    """
     using_options(tablename="invoice")
     ident = Field(String, unique=True)
     created = Field(DateTime, default=datetime.now)
@@ -26,13 +58,16 @@ class Invoice(Entity):
     date_sent = Field(DateTime)
     paid = Field(DateTime, default=None)
     terms = Field(String, default="30 days")
-    status = Field(Enum(["Proforma","Invoice","Cancelled"])) # Don't know about Enum yet, might have to use own type
+    status = Field(Enum(["Proforma","Invoice","Cancelled"]))
     client = ManyToOne('Client') # and OneToMany('Invoice') in Client class
     vat_rate = Field(Numeric(precision=3, scale=1)) # scale?
     vat = Field(Numeric)
     next_invoice = OneToOne('Invoice', inverse='previous_invoice')
     previous_invoice = ManyToOne('Invoice', inverse='next_invoice')
     products = OneToMany('InvoiceLine')
+
+    def __repr__(self):
+        return "%s: date: %s for client: %s" % (self.ident, self.invoice_date, self.client.name)
 
     @property
     def created_date(self):
@@ -233,6 +268,9 @@ class User(Entity):
     permissions = property(permissions)
 
     company = ManyToOne('Company')
+
+    def __repr__(self):
+        return "ID: %i User: %s Display: %s Email: %s Company: %s" % (self.user_id, self.user_name, self.display_name, self.email_address, self.company.name)
 
 class Permission(Entity):
     """

@@ -5,3 +5,4 @@
 *.pyo
 initialise-db.py
 *.log
+document.sh

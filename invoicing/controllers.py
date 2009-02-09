@@ -47,7 +47,7 @@ class Root(controllers.RootController):
 
     def print_products(self, parent):
         #products = "<br />".join(["<a href=\"/product/%s\">%s</a>" % (line.product.id, line.product.name) for line in parent.products])
-        products = ""
+        products = "%i products @ %s" % (parent.product_quantity, parent.net_total)
         return XML(products)
 
     def group_users(self, group):
@@ -60,13 +60,13 @@ class Root(controllers.RootController):
     def icon(self, link, image):
         src=controllers.url(link)
         img=controllers.url("/static/images/%s" % image)
-        log.debug(src)
+        #log.debug(src)
         return XML("<a href=\"%s\"><img src=\"%s\" /></a>" % (src, img))
 
     def email_icon(self, obj):
         url = "/%s/email/%i" % (obj.__class__.__name__.lower(), obj.id)
         img_link = self.icon(url,"internet-mail.png")
-        log.debug(img_link)
+        #log.debug(img_link)
         return img_link
 
     def delete_icon(self, obj):
@@ -139,6 +139,7 @@ class Root(controllers.RootController):
             ('Sent on', 'date_sent'),
             ('Paid on', 'paid'),
             ('Num. Products', 'product_quantity'),
+            ('Net. Total', 'net_total'),
             ('Edit', self.edit_icon),
             ('Email', self.email_icon),
             ('Print', self.print_icon),
@@ -180,7 +181,7 @@ class Root(controllers.RootController):
                             'format_percentage': self.format_percentage})
     
     @expose(template="invoicing.templates.welcome")
-    @identity.require(identity.in_group("admin"))
+    #@identity.require(identity.in_group("admin"))
     def index(self):
         rates=self.vat_rates_table.display(session.query(model.VATRate))
         companies=self.company_table.display(session.query(model.Company))

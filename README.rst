@@ -1,6 +1,13 @@
 Invoicing
 =========
 
+`Source code <http://github.com/wjlroe/invoicing/tree>`_ 
+
+`Bugs/Issues <http://code.google.com/p/tg-invoicing/issues/list>`_
+
+`Project/API documentation <http://wjlr.org.uk/projects/tg-invoicing/>`_  
+
+
 First class objects
 -------------------
 
