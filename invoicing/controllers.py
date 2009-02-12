@@ -19,9 +19,10 @@ from docutils.core import publish_string
 from kid import XML
 
 class Root(controllers.RootController):
+    #require = identity.not_anonymous()
 
     def company_logo(self, company):
-        logo = "<img src=\"/static/images/companies/%s\" />" % company.logo
+        logo = "<img src=\"%s\" />" % controllers.url('/static/images/companies/'+company.logo)
         return XML(logo)
 
     def company_users(self, company):
@@ -29,7 +30,7 @@ class Root(controllers.RootController):
         #users = model.Company.select(company.id).throughTo.users
         for user in company.users:
             #log.debug("company_users: ", user)
-            user_line.append("<a href=\"/user/%i\">%s</a>" % (user.user_id, user.display_name))
+            user_line.append("<a href=\"%s\">%s</a>" % (self.format_link('user','view',user.user_id), user.display_name))
         user_line = "<br />".join(user_line)
         return XML(user_line)
 
@@ -39,7 +40,7 @@ class Root(controllers.RootController):
             invoices = parent.invoices
         else:
             invoices = [parent.invoice for parent in parent.invoice_lines]
-        invoices = ["<a href=\"/invoice/%i\">%s</a>" % (invoice.id, invoice.ident) for invoice in invoices]
+        invoices = ["<a href=\"%s\">%s</a>" % (self.format_link('invoice','view',invoice.id), invoice.ident) for invoice in invoices]
         #for invoice in parent.invoices:
         #    invoices.append("<a href=\"/invoice/%i\">%s</a>" % (invoice.id, invoice.ident))
         invoices = "<br />".join(invoices)
@@ -53,7 +54,7 @@ class Root(controllers.RootController):
     def group_users(self, group):
         users = []
         for user in group.users:
-            users.append("<a href=\"/user/%i\">%s</a>" % (user.user_id, user.display_name))
+            users.append("<a href=\"%s\">%s</a>" % (self.format_link('user','view',user.user_id), user.display_name))
         users = "<br />".join(users)
         return XML(users)
 
@@ -64,7 +65,7 @@ class Root(controllers.RootController):
         return XML("<a href=\"%s\"><img src=\"%s\" /></a>" % (src, img))
 
     def email_icon(self, obj):
-        url = "/%s/email/%i" % (obj.__class__.__name__.lower(), obj.id)
+        url = self.format_link(obj.__class__.__name__.lower(), 'email', obj.id)
         img_link = self.icon(url,"internet-mail.png")
         #log.debug(img_link)
         return img_link
@@ -147,8 +148,8 @@ class Root(controllers.RootController):
             ], template='invoicing.templates.datagrid')
 
         self.menu_items = [["Clients",("All Clients","/clients"),("New Client","/add_client")],
-                           ["Invoices",("All Invoices","/invoices"),("New Invoice","/new_invoice")],
-                           ["Products", ("All Products","/products"),("New Product","/new_product")],
+                           ["Invoices",("All Invoices","/invoices"),("New Invoice","/add_invoice")],
+                           ["Products", ("All Products","/products"),("New Product","/add_product")],
                            ["Admin",
                             ("VAT Rates","/vat_rates"),
                             ("Companies","/companies"),
@@ -173,11 +174,15 @@ class Root(controllers.RootController):
     def format_money(self, price):
         return u"£%.2f" % (price)
 
+    def format_link(self, action="view", type="invoice", id=1, ):
+        return controllers.url("/%s/%s/%i" % (action, type, id))
+
     def add_custom_stdvars(self,vars):
         return vars.update({"get_menu": self.get_menu,
                             'format_address': self.format_address,
                             'format_date': self.format_date,
                             'format_money': self.format_money,
+                            'link': self.format_link,
                             'format_percentage': self.format_percentage})
     
     @expose(template="invoicing.templates.welcome")
@@ -211,16 +216,18 @@ class Root(controllers.RootController):
         return dict(readme=readme)
 
     @expose(template='.templates.invoices')
-    @identity.require(identity.in_group("admin"))
+    #@identity.require(identity.in_group("admin"))
     def invoices(self):
         invoices=self.invoice_table.display(session.query(model.Invoice))
         return dict(invoices=invoices)
 
     @expose(template='.templates.invoice')
-    @identity.require(identity.in_group("admin"))
-    def invoice(self, invoice_id=None):
+    #@identity.require(identity.in_group("admin"))
+    def invoice(self, action="view", invoice_id=None):
         invoice = model.Invoice.get(invoice_id)
-        return dict(invoice=invoice)
+        next = invoice.next_invoice()
+        previous = invoice.previous_invoice()
+        return dict(invoice=invoice, next=next, previous=previous)
 
     @expose(template='.templates.add_client')
     def add_client(self, tg_errors=None):
@@ -232,15 +239,40 @@ class Root(controllers.RootController):
     @validate(form=client_form)
     @error_handler(add_client)
     def save_client(self, **data):
+        client_group = model.ClientGroup.get(data['client_group'])
         client = model.Client(name=data['name'],
                               abbreveated=data['abbreveated'],
                               address=data['address'],
                               country=data['country'],
                               vat_number=data['vat_number'],
                               email_address=data['email_address'],
-                              client_group=data['client_group'])
+                              client_group=client_group)
         client.flush()
         redirect('/')
+
+    @expose(template='.templates.add_invoice')
+    def add_invoice(self, tg_errors=None):
+        if tg_errors:
+            flash('There were problems with the form you submitted')
+        return dict(invoice_form=invoice_form)
+
+    @expose()
+    @validate(form=invoice_form)
+    @error_handler(add_invoice)
+    def save_invoice(self, **data):
+        client = model.Client.get(data['client'])
+        ## TODO: Get this adding a new client when non-existent client data provided.
+        # Pick a VAT Rate..
+        vat_rate = model.VATRate.get_vat_rate(data['date'])
+        invoice = model.Invoice(ident=client.next_invoice_ident,
+                                date=data['date'],
+                                client=client,
+                                vat_rate=vat_rate.vat_rate,
+                                term_length=data['terms'],
+                                term_type=data['term_length'],
+                                status=data['status'])
+        invoice.flush()
+        redirect('/') # TODO: should redirect to edit invoice - to add products later
 
     @expose(template="invoicing.templates.login")
     def login(self, forward_url=None, *args, **kw):
@@ -265,11 +297,11 @@ class Root(controllers.RootController):
             msg = _("Please log in.")
             if not forward_url:
                 forward_url = request.headers.get("Referer", "/")
-
+        companylogo = config.get('invoicing.login.logo')
         response.status = 401
         return dict(logging_in=True, message=msg,
             forward_url=forward_url, previous_url=request.path_info,
-            original_parameters=request.params)
+            original_parameters=request.params, companylogo=companylogo)
 
     @expose()
     def logout(self):

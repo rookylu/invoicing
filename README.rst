@@ -58,6 +58,7 @@ Improve...
 * Company logo in the header - done
 * IMAP login - done
 * Associated table for invoice lines - (product, price, quantity) - done
+* Convert next/previous invoice to function not column (done) - needs optimising rather than calling function in py:if and py:content...
  
 Funtionality to add
 -------------------
@@ -70,3 +71,4 @@ Funtionality to add
 * Link with invoice generator (PDF export)
 * Paginate all tablulated data
 * All tables sortable
+* Convert Proforma to invoice

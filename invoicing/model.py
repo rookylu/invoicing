@@ -42,14 +42,23 @@ from elixir import options_defaults, using_options, setup_all
 from elixir import String, Unicode, Integer, DateTime, Numeric, using_table_options
 from turbogears import identity
 from sqlalchemy.sql.expression import func, and_
-from sqlalchemy import UniqueConstraint
+from sqlalchemy import UniqueConstraint, desc
 from invoicing.model_types import Enum
+import logging
+log = logging.getLogger("invoicing.model")
 
 options_defaults['autosetup'] = False
+invoice_status_values = ["Proforma","Invoice","Cancelled"]
+term_lengths = ["Days","Months","Years"]
 
 class Invoice(Entity):
     """
     Invoice object - contains all info relevant to an invoice
+
+    **Usage**
+    >>> obj = Invoice(name=u"ssjj")
+    >>> obj.name
+    ssjj
     """
     using_options(tablename="invoice")
     ident = Field(String, unique=True)
@@ -57,17 +66,23 @@ class Invoice(Entity):
     date = Field(DateTime, nullable=False)
     date_sent = Field(DateTime)
     paid = Field(DateTime, default=None)
-    terms = Field(String, default="30 days")
-    status = Field(Enum(["Proforma","Invoice","Cancelled"]))
+    #terms = Field(String, default="30 days")
+    term_length = Field(Integer, default=30)
+    term_type = Field(Enum(term_lengths), default="Days")
+    status = Field(Enum(invoice_status_values))
     client = ManyToOne('Client') # and OneToMany('Invoice') in Client class
     vat_rate = Field(Numeric(precision=3, scale=1)) # scale?
     vat = Field(Numeric)
-    next_invoice = OneToOne('Invoice', inverse='previous_invoice')
-    previous_invoice = ManyToOne('Invoice', inverse='next_invoice')
+    #next_invoice = OneToOne('Invoice', inverse='previous_invoice')
+    #previous_invoice = ManyToOne('Invoice', inverse='next_invoice')
     products = OneToMany('InvoiceLine')
 
     def __repr__(self):
         return "%s: date: %s for client: %s" % (self.ident, self.invoice_date, self.client.name)
+
+    @property
+    def terms(self):
+        return "%s %s" % (self.term_length, self.term_type)
 
     @property
     def created_date(self):
@@ -76,6 +91,29 @@ class Invoice(Entity):
     @property
     def invoice_date(self):
         return self.date.strftime("%d/%m/%Y")
+
+    def next_invoice(self, get='next'):
+        invoices = Invoice.query().filter_by(client=self.client)
+        if get == 'next':
+            invoices = invoices.order_by(Invoice.date)
+        else:
+            invoices = invoices.order_by(desc(Invoice.date))
+        invoices = invoices.all()
+        #log.debug("Invoices: ", invoices)
+        found = False
+        next = None
+        for invoice in invoices:
+            log.debug("Invoice: ", invoice.id)
+            if invoice.id == self.id:
+                found = True
+            else:
+                if found:
+                   next = invoice
+                   break
+        return next
+
+    def previous_invoice(self):
+        return self.next_invoice('previous')
 
     @property
     def hasPrevious(self):
@@ -120,6 +158,10 @@ class Invoice(Entity):
         self.products.append(invoice_line)
         self.flush()
 
+    def get_all_invoices(self):
+        return Invoice.query()
+    get_all_invoices = classmethod(get_all_invoices)
+
 class InvoiceLine(Entity):
     invoice = ManyToOne('Invoice')
     product = ManyToOne('Product')
@@ -162,6 +204,10 @@ class Client(Entity):
     def next_invoice_ident(self):
         num = self.invoices_this_year.count() + 1
         return self.abbreveated + str(datetime.today().year) + '-' + "%02i" % num
+
+    def all_clients(self):
+        return Client.query()
+    all_clients = classmethod(all_clients)
 
 class Product(Entity):
     using_options(tablename="product")

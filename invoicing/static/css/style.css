@@ -19,6 +19,7 @@ table { border-collapse: collapse; }
 
 a img {
     border: 0;
+    text-decoration: none;
 }
 
 #header {
@@ -67,6 +68,7 @@ table.products {
 
 a.link, a, a.active {
   color: #369;
+  text-decoration: none;
 }
 
 

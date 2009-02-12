@@ -7,9 +7,10 @@
 </head>
 <body>
   <div id="getting_started">
-    <p py:if="invoice.hasPrevious"><a href="${tg.url('/invoice/%i' % invoice.previous_invoice.id)}">&lt;-- Previous Invoice</a></p>
-    <p py:if="invoice.hasNext" class="right"><a href="${tg.url('/invoice/%i' % invoice.next_invoice.id)}">Next Invoice --&gt;</a></p>
+    <p py:if="previous"><a href="${tg.link('invoice','view',previous.id)}"><img src="${tg.url('/static/images/go-previous.png')}" /> Previous Invoice</a></p>
+    <p py:if="next" class="right"><a href="${tg.link('invoice','view',next.id)}">Next Invoice <img src="${tg.url('/static/images/go-next.png')}" /></a></p>
     <h3 class="right" py:content="tg.format_date(invoice.date)"></h3>
+    <h2 class="right">Status: ${invoice.status}</h2>
     <h3>ATTN: ${invoice.client.billing_person}</h3>
     <p py:content="tg.format_address(invoice.client.address)"></p>
     <p>Invoice number: ${invoice.ident}</p>
@@ -18,12 +19,14 @@
 	<th>DESCRIPTION OF GOODS/SERVICES</th>
 	<th>Total</th>
       </tr>
-      <tr py:for="line in invoice.products">
+      <tr py:if="invoice.products" py:for="line in invoice.products">
 	<td>${line.quantity} x ${line.product.name} (${tg.format_money(line.price)} each)</td>
 	<td py:content="tg.format_money(line.total)"></td>
       </tr>
-      <tr><td></td><td></td></tr>
-      <tr><td></td><td></td></tr>
+      <tr py:if="not invoice.products">
+	<td>No products added to this invoice</td>
+	<td></td>
+      </tr>
       <tr>
 	<td class="right">SUB-TOTAL</td>
 	<td>${tg.format_money(invoice.total)}</td>
@@ -32,7 +35,6 @@
 	<td class="right">VAT (${tg.format_percentage(invoice.vat_rate)})</td>
 	<td>${tg.format_money(invoice.vat)}</td>
       </tr>
-      <tr><td></td><td></td></tr>
       <tr>
 	<td class="right"><h4>TOTAL</h4></td>
 	<td><h4>${tg.format_money(invoice.net_total)}</h4></td>
