@@ -186,7 +186,7 @@ class Root(controllers.RootController):
                             'format_percentage': self.format_percentage})
     
     @expose(template="invoicing.templates.welcome")
-    #@identity.require(identity.in_group("admin"))
+    @identity.require(identity.not_anonymous())
     def index(self):
         rates=self.vat_rates_table.display(session.query(model.VATRate))
         companies=self.company_table.display(session.query(model.Company))
@@ -216,19 +216,41 @@ class Root(controllers.RootController):
         return dict(readme=readme)
 
     @expose(template='.templates.invoices')
-    #@identity.require(identity.in_group("admin"))
+    @identity.require(identity.not_anonymous())
     def invoices(self):
-        invoices=self.invoice_table.display(session.query(model.Invoice))
+        company=identity.current.user.company
+        invoices=self.invoice_table.display(company.invoices)
         return dict(invoices=invoices)
 
     @expose(template='.templates.invoice')
     #@identity.require(identity.in_group("admin"))
     def invoice(self, action="view", invoice_id=None):
+        if action == 'print':
+            redirect("/invoice_pdf/%s/%s" % (action, invoice_id))
         invoice = model.Invoice.get(invoice_id)
         next = invoice.next_invoice()
         previous = invoice.previous_invoice()
         return dict(invoice=invoice, next=next, previous=previous)
 
+    @expose(template=".templates.invoice-fo", fragment=True, format="xml")
+    def invoice_fo(self, action="view", invoice_id=None):
+        invoice = model.Invoice.get(invoice_id)
+        address_lines = invoice.client.address.split(",")
+        return dict(invoice=invoice, address_lines=address_lines)
+
+    @expose()
+    def invoice_pdf(self, action="view", invoice_id=None):
+        fo=self.invoice_fo("view", invoice_id)
+        filename_fo='invoicing/static/invoices/invoice-%s.fo' % invoice_id
+        fo_fd = open(filename_fo, 'w')
+        fo_fd.write(fo)
+        fo_fd.close()
+        filename_pdf=filename_fo.replace(".fo", ".pdf")
+        cmd="fop %s %s" % (filename_fo, filename_pdf)
+        log.debug("Gonna run fop like: %s in dir: %s" % (cmd, os.getcwd()))
+        os.system(cmd)
+        redirect("/static/invoices/invoice-%s.pdf" % invoice_id)
+        
     @expose(template='.templates.add_client')
     def add_client(self, tg_errors=None):
         if tg_errors:

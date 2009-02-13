@@ -29,7 +29,7 @@
 	  <fo:table-body>
 	    <fo:table-row>
 	      <fo:table-cell>
-		<fo:block><fo:external-graphic src="ppws.png"/></fo:block>
+		<fo:block><fo:external-graphic src="../images/companies/ppws2.png"/></fo:block>
 	      </fo:table-cell>
 	      <fo:table-cell>
 		<fo:block text-align="right">
@@ -139,7 +139,7 @@
 
     <fo:flow flow-name="xsl-region-body"> 
 
-      <fo:block text-align="right" padding="2em">13th January 2009</fo:block>
+      <fo:block text-align="right" padding="2em">${tg.format_date(invoice.date)}</fo:block>
 
       <fo:list-block>
 	<fo:list-item>
@@ -151,50 +151,16 @@
 	  </fo:list-item-body>
 	</fo:list-item>
 
-	<fo:list-item>
+	<fo:list-item py:for="line in address_lines">
 	  <fo:list-item-label>
 	    <fo:block/>
 	  </fo:list-item-label>
 	  <fo:list-item-body>
-	    <fo:block>${invoice.client.address.addr_1}</fo:block>
+	    <fo:block>${line}</fo:block>
 	  </fo:list-item-body>
 	</fo:list-item>
 
-	<fo:list-item>
-	  <fo:list-item-label>
-	    <fo:block/>
-	  </fo:list-item-label>
-	  <fo:list-item-body>
-	    <fo:block>${invoice.client.address.addr_2}</fo:block>
-	  </fo:list-item-body>
-	</fo:list-item>
 
-	<fo:list-item>
-	  <fo:list-item-label>
-	    <fo:block/>
-	  </fo:list-item-label>
-	  <fo:list-item-body>
-	    <fo:block>${invoice.client.address.settlement}</fo:block>
-	  </fo:list-item-body>
-	</fo:list-item>
-
-	<fo:list-item>
-	  <fo:list-item-label>
-	    <fo:block/>
-	  </fo:list-item-label>
-	  <fo:list-item-body>
-	    <fo:block>${invoice.client.address.province}</fo:block>
-	  </fo:list-item-body>
-	</fo:list-item>
-
-	<fo:list-item>
-	  <fo:list-item-label>
-	    <fo:block/>
-	  </fo:list-item-label>
-	  <fo:list-item-body>
-	    <fo:block>${invoice.client.address.postcode}</fo:block>
-	  </fo:list-item-body>
-	</fo:list-item>
       </fo:list-block>
 
       <fo:block padding="2em" font-size="smaller">Invoice number: ${invoice.ident}</fo:block>
@@ -207,8 +173,6 @@
         <fo:table-body>
           <fo:table-row>
             <fo:table-cell column-number="2">
-
-
 
 	      <fo:table table-layout="fixed" width="100%" border-collapse="collapse">
 

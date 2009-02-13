@@ -71,6 +71,7 @@ class Invoice(Entity):
     term_type = Field(Enum(term_lengths), default="Days")
     status = Field(Enum(invoice_status_values))
     client = ManyToOne('Client') # and OneToMany('Invoice') in Client class
+    company = ManyToOne('Company')
     vat_rate = Field(Numeric(precision=3, scale=1)) # scale?
     vat = Field(Numeric)
     #next_invoice = OneToOne('Invoice', inverse='previous_invoice')
@@ -99,11 +100,10 @@ class Invoice(Entity):
         else:
             invoices = invoices.order_by(desc(Invoice.date))
         invoices = invoices.all()
-        #log.debug("Invoices: ", invoices)
         found = False
         next = None
         for invoice in invoices:
-            log.debug("Invoice: ", invoice.id)
+            log.debug("Invoice: %s" % invoice.id)
             if invoice.id == self.id:
                 found = True
             else:
@@ -240,6 +240,7 @@ class Company(Entity):
     address = Field(Unicode)
     vat_number = Field(String)
     users = OneToMany('User')
+    invoices = OneToMany('Invoice')
     client_groups = OneToMany('ClientGroup')
 
 class ClientGroup(Entity):
