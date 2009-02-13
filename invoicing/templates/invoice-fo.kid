@@ -29,7 +29,7 @@
 	  <fo:table-body>
 	    <fo:table-row>
 	      <fo:table-cell>
-		<fo:block><fo:external-graphic src="../images/companies/ppws2.png"/></fo:block>
+		<fo:block><fo:external-graphic src="../images/companies/${company.logo}" width="200" /></fo:block>
 	      </fo:table-cell>
 	      <fo:table-cell>
 		<fo:block text-align="right">
@@ -39,43 +39,16 @@
 			<fo:block/>
 		      </fo:list-item-label>
 		      <fo:list-item-body>
-			<fo:block font-weight="bold">Proporta Web Solutions</fo:block>
+			<fo:block font-weight="bold">${company.name}</fo:block>
 		      </fo:list-item-body>
 		    </fo:list-item>
 
-		    <fo:list-item>
+		    <fo:list-item py:for="line in company_address">
 		      <fo:list-item-label>
 			<fo:block/>
 		      </fo:list-item-label>
 		      <fo:list-item-body>
-			<fo:block>Unit 3, Woodingdean Business Park</fo:block>
-		      </fo:list-item-body>
-		    </fo:list-item>
-
-		    <fo:list-item>
-		      <fo:list-item-label>
-			<fo:block/>
-		      </fo:list-item-label>
-		      <fo:list-item-body>
-			<fo:block>Sea View Way</fo:block>
-		      </fo:list-item-body>
-		    </fo:list-item>
-
-		    <fo:list-item>
-		      <fo:list-item-label>
-			<fo:block/>
-		      </fo:list-item-label>
-		      <fo:list-item-body>
-			<fo:block>Brighton</fo:block>
-		      </fo:list-item-body>
-		    </fo:list-item>
-
-		    <fo:list-item>
-		      <fo:list-item-label>
-			<fo:block/>
-		      </fo:list-item-label>
-		      <fo:list-item-body>
-			<fo:block>BN2 6NX</fo:block>
+			<fo:block>${line}</fo:block>
 		      </fo:list-item-body>
 		    </fo:list-item>
 		  </fo:list-block>
@@ -106,7 +79,7 @@
 			<fo:block/>
 		      </fo:list-item-label>
 		      <fo:list-item-body>
-			<fo:block>+44 (0)845 123 2848</fo:block>
+			<fo:block>${company.phone_number}</fo:block>
 		      </fo:list-item-body>
 		    </fo:list-item>
 
@@ -115,7 +88,7 @@
 			<fo:block/>
 		      </fo:list-item-label>
 		      <fo:list-item-body>
-			<fo:block>www.proportasolutions.com</fo:block>
+			<fo:block>${company.url}</fo:block>
 		      </fo:list-item-body>
 		    </fo:list-item>
 
@@ -124,7 +97,7 @@
 			<fo:block/>
 		      </fo:list-item-label>
 		      <fo:list-item-body>
-			<fo:block>sales@proportasolutions.com</fo:block>
+			<fo:block>${company.email_address}</fo:block>
 		      </fo:list-item-body>
 		    </fo:list-item>
 		  </fo:list-block>
@@ -196,7 +169,7 @@
 		      <fo:block>${line.quantity} x ${line.product.name}</fo:block>
 		    </fo:table-cell>
 		    <fo:table-cell padding="2pt" border="1pt solid black">
-		      <fo:block>${line.price}</fo:block>
+		      <fo:block>${tg.format_money(line.price)}</fo:block>
 		    </fo:table-cell>
 		  </fo:table-row>
 		  <fo:table-row>
@@ -204,7 +177,7 @@
 		      <fo:block>Subtotal</fo:block>
 		    </fo:table-cell>
 		    <fo:table-cell padding="2pt" border="1pt solid black">
-		      <fo:block>${invoice.total}</fo:block>
+		      <fo:block>${tg.format_money(invoice.total)}</fo:block>
 		    </fo:table-cell>
 		  </fo:table-row>
 		  <fo:table-row>
@@ -212,7 +185,7 @@
 		      <fo:block>VAT</fo:block>
 		    </fo:table-cell>
 		    <fo:table-cell padding="2pt" border="1pt solid black">
-		      <fo:block>${invoice.vat}</fo:block>
+		      <fo:block>${tg.format_money(invoice.vat)}</fo:block>
 		    </fo:table-cell>
 		  </fo:table-row>
 		  <fo:table-row>
@@ -220,7 +193,7 @@
 		      <fo:block>Grand Total</fo:block>
 		    </fo:table-cell>
 		    <fo:table-cell padding="2pt" border="1pt solid black">
-		      <fo:block>${invoice.net_total}</fo:block>
+		      <fo:block>${tg.format_money(invoice.net_total)}</fo:block>
 		    </fo:table-cell>
 		  </fo:table-row>
 		</fo:table-body>

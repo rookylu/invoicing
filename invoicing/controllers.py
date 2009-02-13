@@ -235,8 +235,10 @@ class Root(controllers.RootController):
     @expose(template=".templates.invoice-fo", fragment=True, format="xml")
     def invoice_fo(self, action="view", invoice_id=None):
         invoice = model.Invoice.get(invoice_id)
+        company=invoice.company
+        company_address = company.address.split(",")
         address_lines = invoice.client.address.split(",")
-        return dict(invoice=invoice, address_lines=address_lines)
+        return dict(invoice=invoice, address_lines=address_lines, company=company, company_address=company_address)
 
     @expose()
     def invoice_pdf(self, action="view", invoice_id=None):
