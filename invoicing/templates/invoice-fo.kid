@@ -29,7 +29,7 @@
 	  <fo:table-body>
 	    <fo:table-row>
 	      <fo:table-cell>
-		<fo:block><fo:external-graphic src="../images/companies/${company.logo}" width="200" /></fo:block>
+		<fo:block><fo:external-graphic src="../images/companies/${company.thumb}" width="250" /></fo:block>
 	      </fo:table-cell>
 	      <fo:table-cell>
 		<fo:block text-align="right">

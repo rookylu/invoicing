@@ -7,8 +7,13 @@
 </head>
 <body>
   <div id="getting_started">
-    <h1>Invoices</h1> <a href="${tg.url('/invoice/new')}">Add Invoice</a>
-    ${invoices}
+    <div class="right">
+      <span class="actionIcons">${tg.edit_icon(product)} ${tg.delete_icon(product)}</span>
+    </div>
+    <h3>Product:</h3> ${product.name}<br />
+    <span py:if="product.parent"><h3>Parent product:</h3> ${product.parent.name}<br /></span>
+    <h3>Price:</h3> ${tg.format_money(product.price)}<br />
+    <h3>Details: </h3> ${product.details}
   </div>
 </body>
 </html>

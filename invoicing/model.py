@@ -29,6 +29,8 @@ This contains all the class definitions necessary to persist Invoice data.
 
 from datetime import datetime
 from datetime import date
+import os
+import os.path
 from turbogears.database import metadata, session
 import pkg_resources
 pkg_resources.require("SQLAlchemy>=0.3.10")
@@ -214,9 +216,14 @@ class Product(Entity):
     name = Field(Unicode, unique=True)
     price = Field(Numeric)
     details = Field(Unicode)
+    company = ManyToOne('Company')
     invoice_lines = OneToMany('InvoiceLine')
     parent = ManyToOne('Product', inverse='children')
     children = OneToMany('Product', inverse='parent')
+
+    def all_root_products(self):
+        return Product.query.filter(Product.parent==None)
+    all_root_products = classmethod(all_root_products)
 
 class VATRate(Entity):
     using_options(tablename="vat_rate")
@@ -241,7 +248,29 @@ class Company(Entity):
     vat_number = Field(String)
     users = OneToMany('User')
     invoices = OneToMany('Invoice')
+    products = OneToMany('Product')
     client_groups = OneToMany('ClientGroup')
+
+    @property
+    def clients(self):
+        _clients = []
+        for group in self.client_groups:
+            _clients.extend(group.clients)
+        return _clients
+
+    @property
+    def thumb(self):
+        file_prefix = "%s/invoicing/static/images/companies/" % (os.getcwd())
+        thumbnail_name = self.logo[:len(self.logo)-4] + '_thumb' + self.logo[len(self.logo)-4:]
+        full_file_name = "%s%s" % (file_prefix, thumbnail_name)
+        log.debug("Full thumbnail: %s" % full_file_name)
+        if not os.path.isfile(full_file_name):
+            # Generate the thumbnail
+            big_file = "%s%s" % (file_prefix, self.logo)
+            log.debug("Big image: %s" % big_file)
+            command = "convert %s -resize 250 %s" % (big_file, full_file_name)
+            os.system(command)
+        return thumbnail_name
 
 class ClientGroup(Entity):
     using_options(tablename="client_group")

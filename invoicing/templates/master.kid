@@ -17,6 +17,11 @@
     </style>
     <link rel="stylesheet" type="text/css" media="screen" href="../static/css/style.css"
         py:attrs="href=tg.url('/static/css/style.css')"/>
+    <script language="javascript">
+      <![CDATA[
+var currentURL = "${tg.request.path_info}";
+ ]]>
+    </script>
     <script language="javascript" src="${tg.url('/static/javascript/menu.js')}"></script>
 </head>
 
@@ -45,7 +50,7 @@
 	</div>
       </div>
     </div>
-    <div id="sidebar" py:content="XML(tg.get_menu())">Here</div>
+    <div id="sidebar">${XML(tg.get_menu())}</div>
     <div id="main_content">
         <div id="status_block" class="flash"
             py:if="value_of('tg_flash', None)" py:content="tg_flash"></div>

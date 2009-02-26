@@ -41,9 +41,10 @@
       </tr>
     </table>
     <p>Payment Term: ${invoice.terms}</p>
-  </div>
-  <div id="footer">
-    
+    <hr />
+    <div class="right">
+      <span class="actionIcons">${tg.print_icon(invoice)} ${tg.edit_icon(invoice)} ${tg.delete_icon(invoice)} ${tg.email_icon(invoice)}</span>
+    </div>
   </div>
 </body>
 </html>

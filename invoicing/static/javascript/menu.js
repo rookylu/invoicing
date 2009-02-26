@@ -61,6 +61,25 @@ function menuConnector(idx) {
     }
 }*/
 
+function myHideElement(elem) {
+    links = getElementsByTagAndClassName("a", null, elem);
+    hideThisMenu = true;
+    for (var idx in links) {
+	link = links[idx];
+	debug("Link: ", link);
+	// TODO: Check the first part of the path info '/invoice/' - ignore the rest
+	if (link.attributes['href'].value == currentURL) {
+	    hideThisMenu = false;
+	    debug("Not gonna hide this element..", elem);
+	}
+    }
+    if (hideThisMenu) {
+	hideElement(elem);
+    } else {
+	showElement(elem);
+    }
+}
+
 function initMenu() {
     headers = getElementsByTagAndClassName("h4", "menuheader", $('menu'));
     submenus = getElementsByTagAndClassName("ul", "submenu", $('menu'));
@@ -73,7 +92,7 @@ function initMenu() {
     } else {
 	debug("There are different numbers of headers to submenus");
     }
-    map(hideElement, submenus);
+    map(myHideElement, submenus);
     //map(connectLink, headers);
 }
 

@@ -3,12 +3,13 @@
     py:extends="'master.kid'">
 <head>
 <meta content="text/html; charset=utf-8" http-equiv="Content-Type" py:replace="''"/>
-<title>Welcome to TurboGears</title>
+<title>Invoicing: Add/edit product</title>
 </head>
 <body>
   <div id="getting_started">
-    <h1>Invoices</h1> <a href="${tg.url('/invoice/new')}">Add Invoice</a>
-    ${invoices}
+    <h3 py:if="len(form_values)==0">New product:</h3>
+    <h3 py:if="len(form_values)>0">Edit product:</h3>
+    ${product_form.display(form_values, options=form_options)}
   </div>
 </body>
 </html>

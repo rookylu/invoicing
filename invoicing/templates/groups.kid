@@ -3,25 +3,12 @@
     py:extends="'master.kid'">
   <head>
     <meta content="text/html; charset=utf-8" http-equiv="Content-Type" py:replace="''"/>
-    <title>Welcome to TurboGears</title>
+      <title>Welcome to TurboGears</title>
   </head>
   <body>
     <div id="getting_started">
-      <h3>VAT Rates</h3>
-      The System VAT Rates:
-      ${rates}
-      <h3>Companies</h3>
-      ${companies}
-      <h3>Users</h3>
-      ${users}
-      <h3>Groups</h3>
+      <h1>Groups</h1> <a href="${tg.url('/add_group')}">Add Group</a>
       ${groups}
-      <h3>Clients</h3> <a href="/add_client">Add</a>
-      ${clients}
-      <h3>Products</h3>
-      ${products}
-      <h3>Invoices</h3>
-      ${invoices}
     </div>
   </body>
 </html>

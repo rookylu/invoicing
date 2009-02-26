@@ -1,9 +1,9 @@
 from turbogears.widgets import forms
 from turbogears.widgets import big_widgets
 from turbogears import validators
-from invoicing.model import ClientGroup, invoice_status_values, Client
+from invoicing.model import ClientGroup, invoice_status_values, Client, Product
 
-class ClientFields(forms.WidgetsList):
+class NewClientFields(forms.WidgetsList):
     """Form to create a client"""
 
     name = forms.TextField(validator=validators.NotEmpty())
@@ -16,35 +16,38 @@ class ClientFields(forms.WidgetsList):
                                            label="Client Group",
                                            options=[(g.id, g.name) for g in ClientGroup.all_client_groups().all()])
 
-client_form = forms.TableForm(
-    fields=ClientFields(),
+new_client_form = forms.TableForm(
+    fields=NewClientFields(),
     action="save_client"
     )
 
-#class TermsFormFields(forms.CompoundFormField):
-#    #terms = forms.TextField(validator=validators.Number())
-#    #term_length = forms.SingleSelectField(validator=validators.NotEmpty(),
-#    #                                     label="Term type",
-#    #                                     options=["Days","Months","Years"])
-#    member_widgets = ['terms','term_length']
-#    template = """
-#    <div xmlns:py="http://purl.org/kid/ns#" class="${field_class}">
-#        ${display_field_for(terms)}
-#        ${display_field_for(term_length)}
-#    </div>
-#    """
-#    def __init__(self, tfield_params={}, sel_params={}, *args, **kw):
-#        # Call super cooperatively so our params get bound to the widget
-#        # instance
-#        super(TermsFormFields, self).__init__(*args, **kw)
-#        # initialize our child widgets
-#        tfield_params.setdefault('validator', validators.Number())
-#        self.terms = forms.TextField("terms", **tfield_params)
-#        # Assign a default valiator to our selection field
-#        sel_params.setdefault('validator', validators.NotEmpty())
-#        self.term_length = forms.SingleSelectField("term_length", **sel_params)
+class NewProductFields(forms.WidgetsList):
+    """Form to create a new product"""
 
-class InvoiceFields(forms.WidgetsList):
+    parent = forms.SingleSelectField(validator=validators.NotEmpty(),
+                                     label="Parent product")
+                                     #options=[(p.id, p.name) for p in Product.all_root_products().all()])
+    name = forms.TextField(validator=validators.NotEmpty(),
+                           attrs=dict(size=40))
+    company = forms.HiddenField()
+
+new_product_form = forms.TableForm(
+    fields=NewProductFields(),
+    action="/product/edit"
+    )
+
+class EditProductFields(forms.WidgetsList):
+    price = forms.TextField(validator=validators.Money())
+    details = forms.TextArea()
+    
+    product_id = forms.HiddenField()
+
+edit_product_form = forms.TableForm(
+    fields=NewProductFields()+EditProductFields(),
+    action="/product/save"
+    )
+
+class NewInvoiceFields(forms.WidgetsList):
     """Form widgets needed to create an invoice"""
     dateformat='%d/%m/%Y'
 
@@ -61,7 +64,7 @@ class InvoiceFields(forms.WidgetsList):
     client = forms.SingleSelectField(validator=validators.NotEmpty(),
                                      options=[(c.id, c.name) for c in Client.all_clients().all()])
 
-invoice_form = forms.TableForm(
-    fields=InvoiceFields(),
-    action="save_invoice",
+new_invoice_form = forms.TableForm(
+    fields=NewInvoiceFields(),
+    action="/invoice/save",
     )

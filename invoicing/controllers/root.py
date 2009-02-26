@@ -3,7 +3,7 @@
 
 import turbogears as tg
 from turbogears import controllers, expose, flash, error_handler
-from turbogears import identity, redirect, validate, config
+from turbogears import identity, redirect, validate, config, paginate
 from turbogears.database import session
 from turbogears.widgets import DataGrid
 import turbogears
@@ -18,8 +18,17 @@ import os.path
 from docutils.core import publish_string
 from kid import XML
 
+## Subcontrollers
+from invoice import InvoiceController
+from product import ProductController
+# Controller utils
+from utils import ControllerUtils
+utils = ControllerUtils()
+
 class Root(controllers.RootController):
-    #require = identity.not_anonymous()
+
+    invoice = InvoiceController()
+    product = ProductController()
 
     def company_logo(self, company):
         logo = "<img src=\"%s\" />" % controllers.url('/static/images/companies/'+company.logo)
@@ -57,33 +66,7 @@ class Root(controllers.RootController):
             users.append("<a href=\"%s\">%s</a>" % (self.format_link('user','view',user.user_id), user.display_name))
         users = "<br />".join(users)
         return XML(users)
-
-    def icon(self, link, image):
-        src=controllers.url(link)
-        img=controllers.url("/static/images/%s" % image)
-        #log.debug(src)
-        return XML("<a href=\"%s\"><img src=\"%s\" /></a>" % (src, img))
-
-    def email_icon(self, obj):
-        url = self.format_link(obj.__class__.__name__.lower(), 'email', obj.id)
-        img_link = self.icon(url,"internet-mail.png")
-        #log.debug(img_link)
-        return img_link
-
-    def delete_icon(self, obj):
-        url = "/%s/delete/%i" % (obj.__class__.__name__.lower(), obj.id)
-        img_link = self.icon(url,"dialog-cancel.png")
-        return img_link
-
-    def print_icon(self, obj):
-        url = "/%s/print/%i" % (obj.__class__.__name__.lower(), obj.id)
-        img_link = self.icon(url,"document-print.png")
-        return img_link
-
-    def edit_icon(self, obj):
-        url = "/%s/edit/%i" % (obj.__class__.__name__.lower(), obj.id)
-        img_link = self.icon(url,"edit.png")
-        return img_link
+  
     
     def __init__(self):
         self.vat_rates_table = DataGrid(fields=[
@@ -125,31 +108,9 @@ class Root(controllers.RootController):
             ('Group', 'group.name')
             ])
 
-        self.product_table = DataGrid(fields=[
-            ('Name', 'name'),
-            ('Price', 'price'),
-            ('Invoices', self.print_invoices)
-            ])
-
-        self.invoice_table = DataGrid(fields=[
-            ('Ident', 'ident'),
-            ('Client', 'client.name'),
-            ('Status', 'status'),
-            ('Created on', 'created_date'),
-            ('Date', 'invoice_date'),
-            ('Sent on', 'date_sent'),
-            ('Paid on', 'paid'),
-            ('Num. Products', 'product_quantity'),
-            ('Net. Total', 'net_total'),
-            ('Edit', self.edit_icon),
-            ('Email', self.email_icon),
-            ('Print', self.print_icon),
-            ('Delete', self.delete_icon)
-            ], template='invoicing.templates.datagrid')
-
-        self.menu_items = [["Clients",("All Clients","/clients"),("New Client","/add_client")],
-                           ["Invoices",("All Invoices","/invoices"),("New Invoice","/add_invoice")],
-                           ["Products", ("All Products","/products"),("New Product","/add_product")],
+        self.menu_items = [["Clients",("All Clients","/client/list"),("New Client","/client/new")],
+                           ["Invoices",("All Invoices","/invoice/list"),("New Invoice","/invoice/new")],
+                           ["Products", ("All Products","/product/list"),("New Product","/product/new")],
                            ["Admin",
                             ("VAT Rates","/vat_rates"),
                             ("Companies","/companies"),
@@ -158,32 +119,36 @@ class Root(controllers.RootController):
                             ("README","/readme")]]
         turbogears.view.variable_providers.append(self.add_custom_stdvars)
 
-    @expose(template='.templates.menu')
+    @expose(template='invoicing.templates.menu')
     def get_menu(self):
         return dict(menu_items=self.menu_items)
 
-    def format_address(self, address):
-        return XML(address.replace(',',',<br />'))
-
-    def format_date(self, date):
-        return date.strftime('%d %B %Y')
-
-    def format_percentage(self, amount):
-        return "%.2f%%" % (amount*100)
-
-    def format_money(self, price):
-        return u"£%.2f" % (price)
-
-    def format_link(self, action="view", type="invoice", id=1, ):
-        return controllers.url("/%s/%s/%i" % (action, type, id))
+    def absolute_to_local(self, request):
+        "Resolves an absolute URL to a local one, so that the JS can match menu entries against the location bar."
+        toRemove = "%s" % request.remote_host
+        log.debug("toRemove: %s" % toRemove)
+        if request.remote_port:
+            toRemove = "%s%s" % (toRemove, str(request.remote_port))
+        log.debug("toRemove: %s" % toRemove)
+        link = request.browser_url[len(toRemove):]
+        return link
 
     def add_custom_stdvars(self,vars):
+        "Lots of lovely utility functions to be used from the templates"
         return vars.update({"get_menu": self.get_menu,
-                            'format_address': self.format_address,
-                            'format_date': self.format_date,
-                            'format_money': self.format_money,
-                            'link': self.format_link,
-                            'format_percentage': self.format_percentage})
+                            'format_address': utils.format_address,
+                            'format_date': utils.format_date,
+                            'format_money': utils.format_money,
+                            'link': utils.format_link,
+                            'print_icon': utils.print_icon,
+                            'delete_icon': utils.delete_icon,
+                            'view_icon': utils.view_icon,
+                            'edit_icon': utils.edit_icon,
+                            'email_icon': utils.email_icon,
+                            'tick_icon': utils.tick_icon,
+                            'cross_icon': utils.cross_icon,
+                            'abs_to_local': self.absolute_to_local,
+                            'format_percentage': utils.format_percentage})
     
     @expose(template="invoicing.templates.welcome")
     @identity.require(identity.not_anonymous())
@@ -207,6 +172,7 @@ class Root(controllers.RootController):
     @expose(template='.templates.readme')
     @expose(template='.templates.iframe', as_format='iframe')
     def readme(self):
+        "Return the README.rst formatted as HTML that is embeded in an iframe"
         file_to_read = config.get('invoicing.readme')
         filefd = open(file_to_read, 'r')
         readme = publish_string(
@@ -215,14 +181,22 @@ class Root(controllers.RootController):
             writer_name='html')
         return dict(readme=readme)
 
-    @expose(template='.templates.invoices')
+    @expose(template='.templates.clients')
+    @identity.require(identity.not_anonymous())
+    def clients(self):
+        company=identity.current.user.company
+        clients=self.client_table.display(company.clients)
+        return dict(clients=clients)
+
+    """@expose(template='.templates.invoices')
     @identity.require(identity.not_anonymous())
     def invoices(self):
         company=identity.current.user.company
+        #client_groups=company.client_groups
         invoices=self.invoice_table.display(company.invoices)
-        return dict(invoices=invoices)
+        return dict(invoices=invoices)"""
 
-    @expose(template='.templates.invoice')
+    """@expose(template='.templates.invoice')
     #@identity.require(identity.in_group("admin"))
     def invoice(self, action="view", invoice_id=None):
         if action == 'print':
@@ -230,7 +204,7 @@ class Root(controllers.RootController):
         invoice = model.Invoice.get(invoice_id)
         next = invoice.next_invoice()
         previous = invoice.previous_invoice()
-        return dict(invoice=invoice, next=next, previous=previous)
+        return dict(invoice=invoice, next=next, previous=previous)"""
 
     @expose(template=".templates.invoice-fo", fragment=True, format="xml")
     def invoice_fo(self, action="view", invoice_id=None):
@@ -252,15 +226,39 @@ class Root(controllers.RootController):
         log.debug("Gonna run fop like: %s in dir: %s" % (cmd, os.getcwd()))
         os.system(cmd)
         redirect("/static/invoices/invoice-%s.pdf" % invoice_id)
-        
+
+    @expose(template='.templates.vat_rates')
+    @identity.require(identity.not_anonymous())
+    def vat_rates(self):
+        vat_rates=self.vat_rates_table.display(model.VATRate.query())
+        return dict(vat_rates=vat_rates)
+
+    @expose(template='.templates.companies')
+    @identity.require(identity.not_anonymous())
+    def companies(self):
+        companies=self.company_table.display(model.Company.query())
+        return dict(companies=companies)
+
+    @expose(template='.templates.users')
+    @identity.require(identity.not_anonymous())
+    def users(self):
+        users=self.user_table.display(model.User.query())
+        return dict(users=users)
+
+    @expose(template='.templates.groups')
+    @identity.require(identity.not_anonymous())
+    def groups(self):
+        groups=self.group_table.display(model.Group.query())
+        return dict(groups=groups)
+
     @expose(template='.templates.add_client')
     def add_client(self, tg_errors=None):
         if tg_errors:
             flash('There were problems with the data submitted!')
-        return dict(client_form=client_form)
+        return dict(client_form=new_client_form)
 
     @expose()
-    @validate(form=client_form)
+    @validate(form=new_client_form)
     @error_handler(add_client)
     def save_client(self, **data):
         client_group = model.ClientGroup.get(data['client_group'])
@@ -278,10 +276,10 @@ class Root(controllers.RootController):
     def add_invoice(self, tg_errors=None):
         if tg_errors:
             flash('There were problems with the form you submitted')
-        return dict(invoice_form=invoice_form)
+        return dict(invoice_form=new_invoice_form)
 
     @expose()
-    @validate(form=invoice_form)
+    @validate(form=new_invoice_form)
     @error_handler(add_invoice)
     def save_invoice(self, **data):
         client = model.Client.get(data['client'])
@@ -296,7 +294,8 @@ class Root(controllers.RootController):
                                 term_type=data['term_length'],
                                 status=data['status'])
         invoice.flush()
-        redirect('/') # TODO: should redirect to edit invoice - to add products later
+        redirect(controllers.url('/invoice/edit/%i' % invoice.id)) # TODO: should redirect to edit invoice - to add products later
+  
 
     @expose(template="invoicing.templates.login")
     def login(self, forward_url=None, *args, **kw):
