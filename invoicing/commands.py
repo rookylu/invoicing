@@ -6,7 +6,7 @@ from os import getcwd
 from os.path import dirname, exists, join
 
 import pkg_resources
-pkg_resources.require("TurboGears>=1.0.8")
+pkg_resources.require("TurboGears>=1.0.8,<1.1")
 pkg_resources.require("SQLAlchemy>=0.3.10")
 
 import cherrypy

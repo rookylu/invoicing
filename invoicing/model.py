@@ -72,7 +72,8 @@ class Invoice(Entity):
     status = Field(Enum(invoice_status_values))
     client = ManyToOne('Client') # and OneToMany('Invoice') in Client class
     company = ManyToOne('Company')
-    vat_rate = Field(Numeric(precision=3, scale=1)) # scale?
+    #vat_rate = Field(Numeric(precision=3, scale=1))
+    vat_rate = Field(Numeric()) # scale, precision wasn't working
     vat = Field(Numeric)
     #next_invoice = OneToOne('Invoice', inverse='previous_invoice')
     #previous_invoice = ManyToOne('Invoice', inverse='next_invoice')
@@ -221,7 +222,8 @@ class Product(Entity):
 class VATRate(Entity):
     using_options(tablename="vat_rate")
     name = Field(String, default="Standard Rate")
-    vat_rate = Field(Numeric(precision=3, scale=1), default=0.175)
+    #vat_rate = Field(Numeric(precision=3, scale=1), default=0.175)
+    vat_rate = Field(Numeric(), default=0.175) # scale,precision not working
     effective_from = Field(DateTime, default=date(1970,1,1),unique=True)
     effective_to = Field(DateTime, default=date(2999,12,1))
 
