@@ -1,8 +1,11 @@
 *~
 *.sqlite
 *#
+.#*
 *.pyc
 *.pyo
 initialise-db.py
 *.log
 document.sh
+docs/
+html/
