@@ -1,4 +1,4 @@
-#!C:\Python25\python.exe
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
 """Start script for the Invoicing TurboGears project.
 

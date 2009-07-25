@@ -26,7 +26,7 @@ setup(
     #license=license,
 
     install_requires=[
-        "TurboGears >= 1.0.8",
+        "TurboGears >= 1.0.8,<1.1",
         "SQLAlchemy>=0.3.10",
         "Elixir>=0.4.0",
     ],
