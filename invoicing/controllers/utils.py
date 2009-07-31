@@ -56,13 +56,13 @@ class ControllerUtils:
         link = "<a href=\"%s\">%s</a>" % (url,text)
         return XML(link)
 
-    def format_address(self, address):
+    def format_address(self, address=""):
         return XML(address.replace(',',',<br />'))
 
     def format_date(self, date):
         return date.strftime('%d %B %Y')
 
-    def format_percentage(self, amount):
+    def format_percentage(self, amount=0):
         return "%.2f%%" % (amount*100)
 
     def format_money(self, price):
@@ -70,3 +70,15 @@ class ControllerUtils:
 
     def format_link(self, action="view", type="invoice", id=1):
         return controllers.url("/%s/%s/%i" % (action, type, id))
+
+    def print_invoices(self, parent):
+        if hasattr(parent, 'invoices'):
+            #invoices = ["<a href=\"/invoice/%i\">%s</a>" % (invoice.id, invoice.ident) for invoice in parent.invoices]
+            invoices = parent.invoices
+        else:
+            invoices = [parent.invoice for parent in parent.invoice_lines]
+        invoices = ["<a href=\"%s\">%s</a>" % (utils.format_link('invoice','view',invoice.id), invoice.ident) for invoice in invoices]
+        #for invoice in parent.invoices:
+        #    invoices.append("<a href=\"/invoice/%i\">%s</a>" % (invoice.id, invoice.ident))
+        invoices = "<br />".join(invoices)
+        return XML(invoices)

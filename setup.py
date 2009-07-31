@@ -29,6 +29,7 @@ setup(
         "TurboGears >= 1.0.8,<1.1",
         "SQLAlchemy>=0.3.10",
         "Elixir>=0.4.0",
+        "docutils",
     ],
     zip_safe=False,
     packages=packages,

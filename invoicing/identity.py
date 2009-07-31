@@ -21,6 +21,7 @@ class ImapSqlAlchemyIdentityProvider(SqlAlchemyIdentityProvider):
         self.imap_authoritative = config.get("identity.imapprovider.imap_authoritative", False)
         self.server = config.get("identity.imapprovider.server", "localhost")
         self.port = config.get("identity.imapprovider.port", 143)
+        self.ssl = config.get("identity.imapprovider.ssl", False)
 
         # These four lines make the user and visit classes available for
         # later use
@@ -55,7 +56,10 @@ class ImapSqlAlchemyIdentityProvider(SqlAlchemyIdentityProvider):
     def validate_password(self, user, user_name, password):
         rc = False
         try:
-            imapcon = imaplib.IMAP4(self.server, self.port)
+            if self.ssl:
+                imapcon = imaplib.IMAP4_SSL(self.server, self.port)
+            else:
+                imapcon = imaplib.IMAP4(self.server, self.port)
         except:
             log.error("Could not establish connection to server at %s:%d" % (self.server, self.port))
             return rc

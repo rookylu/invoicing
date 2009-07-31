@@ -7,7 +7,7 @@
   </head>
   <body>
     <div id="getting_started">
-      <h1>Clients</h1> <a href="${tg.url('/add_client')}">Add Client</a>
+      <h1>Clients</h1> <a href="${tg.url('/client/new')}">Add Client</a>
       ${clients}
     </div>
   </body>
