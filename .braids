@@ -1,0 +1,8 @@
+--- 
+vendor/plugins/cucumber: 
+  squashed: true
+  url: git://github.com/aslakhellesoy/cucumber.git
+  branch: master
+  type: git
+  revision: e19cb3758b53a1ddd1b5e180d74d340a2efbc8ea
+  remote: braid/vendor/plugins/cucumber
