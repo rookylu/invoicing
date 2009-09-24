@@ -6,6 +6,13 @@ vendor/plugins/rspec-rails:
   type: git
   revision: 70041db8031b3d4a6fb31198105c23473fcc1c99
   remote: braid/vendor/plugins/rspec-rails
+vendor/plugins/machinist: 
+  squashed: true
+  url: git://github.com/notahat/machinist.git
+  branch: master
+  type: git
+  revision: 3b2a729f0bb1723f50ad2ffc819bbcd18626130e
+  remote: braid/vendor/plugins/machinist
 vendor/plugins/cucumber: 
   squashed: true
   url: git://github.com/aslakhellesoy/cucumber.git
