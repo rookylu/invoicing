@@ -1,0 +1,43 @@
+<h1>New client</h1>
+
+<% form_for(@client) do |f| %>
+  <%= f.error_messages %>
+
+  <p>
+    <%= f.label :name %><br />
+    <%= f.text_field :name %>
+  </p>
+  <p>
+    <%= f.label :abbreveated %><br />
+    <%= f.text_field :abbreveated %>
+  </p>
+  <p>
+    <%= f.label :billing_person %><br />
+    <%= f.text_field :billing_person %>
+  </p>
+  <p>
+    <%= f.label :phone_number %><br />
+    <%= f.text_field :phone_number %>
+  </p>
+  <p>
+    <%= f.label :address %><br />
+    <%= f.text_area :address %>
+  </p>
+  <p>
+    <%= f.label :country %><br />
+    <%= f.text_field :country %>
+  </p>
+  <p>
+    <%= f.label :vat_number %><br />
+    <%= f.text_field :vat_number %>
+  </p>
+  <p>
+    <%= f.label :email_addres %><br />
+    <%= f.text_field :email_addres %>
+  </p>
+  <p>
+    <%= f.submit 'Create' %>
+  </p>
+<% end %>
+
+<%= link_to 'Back', clients_path %>

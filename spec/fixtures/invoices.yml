@@ -1,0 +1,11 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  ident: MyString
+  date: 2009-09-24 22:47:49
+  date_sent: 2009-09-24 22:47:49
+
+two:
+  ident: MyString
+  date: 2009-09-24 22:47:49
+  date_sent: 2009-09-24 22:47:49

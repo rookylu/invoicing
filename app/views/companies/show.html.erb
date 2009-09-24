@@ -1,0 +1,33 @@
+<p>
+  <b>Name:</b>
+  <%=h @company.name %>
+</p>
+
+<p>
+  <b>Phone number:</b>
+  <%=h @company.phone_number %>
+</p>
+
+<p>
+  <b>Email address:</b>
+  <%=h @company.email_address %>
+</p>
+
+<p>
+  <b>Url:</b>
+  <%=h @company.url %>
+</p>
+
+<p>
+  <b>Address:</b>
+  <%=h @company.address %>
+</p>
+
+<p>
+  <b>Vat number:</b>
+  <%=h @company.vat_number %>
+</p>
+
+
+<%= link_to 'Edit', edit_company_path(@company) %> |
+<%= link_to 'Back', companies_path %>

@@ -1,0 +1,18 @@
+<p>
+  <b>Ident:</b>
+  <%=h @invoice.ident %>
+</p>
+
+<p>
+  <b>Date:</b>
+  <%=h @invoice.date %>
+</p>
+
+<p>
+  <b>Date sent:</b>
+  <%=h @invoice.date_sent %>
+</p>
+
+
+<%= link_to 'Edit', edit_invoice_path(@invoice) %> |
+<%= link_to 'Back', invoices_path %>

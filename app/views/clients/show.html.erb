@@ -1,0 +1,43 @@
+<p>
+  <b>Name:</b>
+  <%=h @client.name %>
+</p>
+
+<p>
+  <b>Abbreveated:</b>
+  <%=h @client.abbreveated %>
+</p>
+
+<p>
+  <b>Billing person:</b>
+  <%=h @client.billing_person %>
+</p>
+
+<p>
+  <b>Phone number:</b>
+  <%=h @client.phone_number %>
+</p>
+
+<p>
+  <b>Address:</b>
+  <%=h @client.address %>
+</p>
+
+<p>
+  <b>Country:</b>
+  <%=h @client.country %>
+</p>
+
+<p>
+  <b>Vat number:</b>
+  <%=h @client.vat_number %>
+</p>
+
+<p>
+  <b>Email addres:</b>
+  <%=h @client.email_addres %>
+</p>
+
+
+<%= link_to 'Edit', edit_client_path(@client) %> |
+<%= link_to 'Back', clients_path %>
