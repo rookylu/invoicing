@@ -1,2 +1,2 @@
-module VATRatesHelper
+module VatRatesHelper
 end

@@ -1,0 +1,23 @@
+- content_for :title do
+  Listing Invoices
+
+%h2 Listing invoices
+
+%table
+  %thead
+    %tr
+      %th Ident
+      %th Date
+      %th Date sent
+
+  %tbody
+    - @invoices.each do |invoice|
+      %tr
+        %td=h invoice.ident
+        %td=h invoice.date
+        %td=h invoice.date_sent
+        %td= link_to 'Show', invoice 
+        %td= link_to 'Edit', edit_invoice_path(invoice)
+        %td= link_to 'Destroy', invoice, :confirm => 'Are you sure?', :method => :delete
+
+= link_to 'New invoice', new_invoice_path 

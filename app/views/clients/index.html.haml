@@ -1,0 +1,30 @@
+%h2 Listing clients
+
+%table
+  %thead
+    %tr
+      %th Name
+      %th Abbreveated
+      %th Billing person
+      %th Phone number
+      %th Address
+      %th Country
+      %th Vat number
+      %th Email address
+
+  %tbody
+    - @clients.each do |client|
+      %tr
+        %td= h client.name 
+        %td= h client.abbreviated 
+        %td= h client.billing_person 
+        %td= h client.phone_number
+        %td= h client.address
+        %td= h client.country 
+        %td= h client.vat_number 
+        %td= h client.email_address
+        %td= link_to 'Show', client 
+        %td= link_to 'Edit', edit_client_path(client) 
+        %td= link_to 'Destroy', client, :confirm => 'Are you sure?', :method => :delete 
+
+= link_to 'New client', new_client_path 

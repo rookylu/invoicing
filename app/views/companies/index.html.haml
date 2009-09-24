@@ -1,0 +1,26 @@
+%h2 Listing companies
+
+%table
+  %thead
+    %tr
+      %th Name
+      %th Phone number
+      %th Email address
+      %th Url
+      %th Address
+      %th Vat number
+
+  %tbody
+    - @companies.each do |company|
+      %tr
+        %td= h company.name
+        %td= h company.phone_number 
+        %td= h company.email_address 
+        %td= h company.url 
+        %td= h company.address 
+        %td= h company.vat_number 
+        %td= link_to 'Show', company 
+        %td= link_to 'Edit', edit_company_path(company) 
+        %td= link_to 'Destroy', company, :confirm => 'Are you sure?', :method => :delete 
+
+= link_to 'New company', new_company_path

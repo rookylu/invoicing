@@ -1,2 +1,2 @@
-module ClingGroupsHelper
+module ClientGroupsHelper
 end
