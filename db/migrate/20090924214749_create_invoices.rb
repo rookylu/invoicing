@@ -7,9 +7,12 @@ class CreateInvoices < ActiveRecord::Migration
 
       t.timestamps
     end
+
+    execute "ALTER TABLE invoices ADD state ENUM('created', 'sent') NOT NULL;"
   end
 
   def self.down
+    remove_column :invoices, :state
     drop_table :invoices
   end
 end

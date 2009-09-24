@@ -47,6 +47,7 @@ ActiveRecord::Schema.define(:version => 20090924214749) do
     t.datetime "date_sent"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "state",      :limit => 0, :null => false
   end
 
   create_table "products", :force => true do |t|
