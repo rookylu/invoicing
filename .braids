@@ -13,3 +13,10 @@ vendor/plugins/cucumber:
   type: git
   revision: e19cb3758b53a1ddd1b5e180d74d340a2efbc8ea
   remote: braid/vendor/plugins/cucumber
+vendor/plugins/scenes: 
+  squashed: true
+  url: git://github.com/barrym/scenes.git
+  branch: master
+  type: git
+  revision: cc0c0924ed5f657fccdfc30c8cb012f727abdfd7
+  remote: braid/vendor/plugins/scenes
