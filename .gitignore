@@ -9,3 +9,4 @@ initialise-db.py
 document.sh
 docs/
 html/
+build/
