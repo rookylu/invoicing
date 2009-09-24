@@ -45,6 +45,7 @@ ActiveRecord::Schema.define(:version => 20090924214749) do
     t.string   "ident"
     t.datetime "date"
     t.datetime "date_sent"
+    t.integer  "client_id"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "state",      :limit => 0, :null => false

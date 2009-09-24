@@ -30,9 +30,16 @@ set_scene("Lots of Clients") do
   end
 end
 
+set_scene("Lots of Invoices") do
+  200.times do
+    Invoice.make
+  end
+end
+
 set_scene("A lot of data") do
   get_scene("VAT rates").play
   get_scene("Lots of Companies").play
   get_scene("Lots of Products").play
   get_scene("Lots of Clients").play
+  get_scene("Lots of Invoices").play
 end

@@ -36,3 +36,8 @@ end
 Product.blueprint do
   name { Sham.product_name }
 end
+
+Invoice.blueprint do
+  client { Client.first || Client.make }
+  ident { |x| "#{client.abbreviated}#{DateTime.now}-%02d" % x }
+end

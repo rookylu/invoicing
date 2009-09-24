@@ -1,36 +1,41 @@
 --- 
+vendor/plugins/acts_as_state_machine: 
+  squashed: true
+  url: http://elitists.textdriven.com/svn/plugins/acts_as_state_machine/trunk
+  type: svn
+  remote: braid/vendor/plugins/acts-as-state-machine
 vendor/plugins/rspec-rails: 
   squashed: true
-  url: git://github.com/dchelimsky/rspec-rails.git
   branch: master
+  url: git://github.com/dchelimsky/rspec-rails.git
   type: git
   revision: 70041db8031b3d4a6fb31198105c23473fcc1c99
   remote: braid/vendor/plugins/rspec-rails
 vendor/plugins/machinist: 
   squashed: true
-  url: git://github.com/notahat/machinist.git
   branch: master
+  url: git://github.com/notahat/machinist.git
   type: git
   revision: 3b2a729f0bb1723f50ad2ffc819bbcd18626130e
   remote: braid/vendor/plugins/machinist
 vendor/plugins/will_paginate: 
   squashed: true
-  url: git://github.com/mislav/will_paginate.git
   branch: master
+  url: git://github.com/mislav/will_paginate.git
   type: git
   revision: b3b0f593ea9b1da13a64bc825dfe17b6bbc2828b
   remote: braid/vendor/plugins/will-paginate
 vendor/plugins/cucumber: 
   squashed: true
-  url: git://github.com/aslakhellesoy/cucumber.git
   branch: master
+  url: git://github.com/aslakhellesoy/cucumber.git
   type: git
   revision: e19cb3758b53a1ddd1b5e180d74d340a2efbc8ea
   remote: braid/vendor/plugins/cucumber
 vendor/plugins/scenes: 
   squashed: true
-  url: git://github.com/barrym/scenes.git
   branch: master
+  url: git://github.com/barrym/scenes.git
   type: git
   revision: cc0c0924ed5f657fccdfc30c8cb012f727abdfd7
   remote: braid/vendor/plugins/scenes
