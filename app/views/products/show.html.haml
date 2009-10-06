@@ -1,0 +1,30 @@
+%dl
+  %dt Name:
+  %dd= h @product.name
+  %dt Price:
+  %dd= h @product.price
+  %dt Details:
+  %dd= h @product.details
+
+- if @product.invoices.count > 0
+  %h3 Invoices containing this product:
+  %table#product_invoices
+    %thead
+      %tr
+        %th Ident
+        %th Client
+        %th State
+        %th Date
+    %tbody
+      - @invoices.each do |invoice|
+        %tr
+          %td= link_to invoice.ident, invoice
+          %td= link_to invoice.client.name, invoice.client
+          %td= link_to invoice.state_info
+          %td= invoice.date
+    %tfoot
+      %tr
+        %td.centre{:colspan => 4}= will_paginate @invoices
+
+= link_to 'Edit', edit_product_path(@product) |
+= link_to 'Back', products_path 

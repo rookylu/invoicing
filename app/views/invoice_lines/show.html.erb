@@ -1,0 +1,23 @@
+<p>
+  <b>Invoice:</b>
+  <%=h @invoice_line.invoice_id %>
+</p>
+
+<p>
+  <b>Product:</b>
+  <%=h @invoice_line.product_id %>
+</p>
+
+<p>
+  <b>Price:</b>
+  <%=h @invoice_line.price %>
+</p>
+
+<p>
+  <b>Quantity:</b>
+  <%=h @invoice_line.quantity %>
+</p>
+
+
+<%= link_to 'Edit', edit_invoice_line_path(@invoice_line) %> |
+<%= link_to 'Back', invoice_lines_path %>

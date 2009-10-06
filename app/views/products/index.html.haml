@@ -1,0 +1,25 @@
+%h2 Listing products
+
+%table
+  %thead
+    %tr
+      %th Name
+      %th Price
+      %th Details
+      %th/
+      %th/
+
+  %tbody
+    - @products.each do |product|
+      %tr
+        %td= link_to product.name, product
+        %td= format_price(product.price)
+        %td=h product.details 
+        %td= link_to 'Edit', edit_product_path(product), :class => 'button'
+        %td= link_to 'Destroy', product, :confirm => 'Are you sure?', :method => :delete, :class => 'button'
+
+  %tfoot
+    %tr
+      %td.centre{:colspan => 5}= will_paginate @products
+
+= link_to 'New product', new_product_path 

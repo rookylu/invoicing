@@ -1,0 +1,26 @@
+# == Schema Information
+#
+# Table name: vat_rates
+#
+#  id             :integer(4)      not null, primary key
+#  name           :string(255)
+#  vat_rate       :integer(4)
+#  effective_from :datetime
+#  effective_to   :datetime
+#  created_at     :datetime
+#  updated_at     :datetime
+#
+
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  name: MyString
+  vat_rate: 1
+  effective_from: 2009-09-24 22:35:31
+  effective_to: 2009-09-24 22:35:31
+
+two:
+  name: MyString
+  vat_rate: 1
+  effective_from: 2009-09-24 22:35:31
+  effective_to: 2009-09-24 22:35:31

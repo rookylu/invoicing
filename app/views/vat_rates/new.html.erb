@@ -1,0 +1,27 @@
+<h1>New vat_rate</h1>
+
+<% form_for(@vat_rate) do |f| %>
+  <%= f.error_messages %>
+
+  <p>
+    <%= f.label :name %><br />
+    <%= f.text_field :name %>
+  </p>
+  <p>
+    <%= f.label :vat_rate %><br />
+    <%= f.text_field :vat_rate %>
+  </p>
+  <p>
+    <%= f.label :effective_from %><br />
+    <%= f.datetime_select :effective_from %>
+  </p>
+  <p>
+    <%= f.label :effective_to %><br />
+    <%= f.datetime_select :effective_to %>
+  </p>
+  <p>
+    <%= f.submit 'Create' %>
+  </p>
+<% end %>
+
+<%= link_to 'Back', vat_rates_path %>

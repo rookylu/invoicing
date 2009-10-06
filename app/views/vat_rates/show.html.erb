@@ -1,0 +1,23 @@
+<p>
+  <b>Name:</b>
+  <%=h @vat_rate.name %>
+</p>
+
+<p>
+  <b>Vat rate:</b>
+  <%=h @vat_rate.vat_rate %>
+</p>
+
+<p>
+  <b>Effective from:</b>
+  <%=h @vat_rate.effective_from %>
+</p>
+
+<p>
+  <b>Effective to:</b>
+  <%=h @vat_rate.effective_to %>
+</p>
+
+
+<%= link_to 'Edit', edit_vat_rate_path(@vat_rate) %> |
+<%= link_to 'Back', vat_rates_path %>

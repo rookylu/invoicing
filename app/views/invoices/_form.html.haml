@@ -1,0 +1,14 @@
+- form_for(@invoice) do |f|
+  = f.error_messages 
+
+  %dl
+    %dt= f.label :ident 
+    %dd= f.text_field :ident 
+
+    %dt= f.label :client_id
+    %dd= f.collection_select :client_id, Client.all, :id, :name
+
+    %dt= f.label :date
+    %dd= f.date_select :date 
+
+    %dd= f.submit 'Create' 

@@ -1,0 +1,26 @@
+<h1>Listing vat_rates</h1>
+
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Vat rate</th>
+    <th>Effective from</th>
+    <th>Effective to</th>
+  </tr>
+
+<% @vat_rates.each do |vat_rate| %>
+  <tr>
+    <td><%=h vat_rate.name %></td>
+    <td><%=h vat_rate.vat_rate %></td>
+    <td><%=h vat_rate.effective_from %></td>
+    <td><%=h vat_rate.effective_to %></td>
+    <td><%= link_to 'Show', vat_rate %></td>
+    <td><%= link_to 'Edit', edit_vat_rate_path(vat_rate) %></td>
+    <td><%= link_to 'Destroy', vat_rate, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New vat_rate', new_vat_rate_path %>

@@ -1,0 +1,24 @@
+%h2 Listing clients
+
+%table
+  %thead
+    %tr
+      %th Name
+      %th Phone number
+      %th Email address
+      %th/
+      %th/
+
+  %tbody
+    - @clients.each do |client|
+      %tr
+        %td= link_to client.name, client
+        %td= h client.phone_number
+        %td= h client.email_address
+        %td= link_to 'Edit', edit_client_path(client), :class => 'button'
+        %td= link_to 'Destroy', client, :confirm => 'Are you sure?', :method => :delete, :class => 'button'
+  %tfoot
+    %tr
+      %td.centre{:colspan => 5}= will_paginate @clients
+
+= link_to 'New client', new_client_path 

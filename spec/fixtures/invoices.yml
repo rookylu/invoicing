@@ -1,0 +1,25 @@
+# == Schema Information
+#
+# Table name: invoices
+#
+#  id         :integer(4)      not null, primary key
+#  ident      :string(255)
+#  date       :datetime
+#  date_sent  :datetime
+#  client_id  :integer(4)
+#  created_at :datetime
+#  updated_at :datetime
+#  state      :string(0)       not null
+#
+
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  ident: MyString
+  date: 2009-09-24 22:47:49
+  date_sent: 2009-09-24 22:47:49
+
+two:
+  ident: MyString
+  date: 2009-09-24 22:47:49
+  date_sent: 2009-09-24 22:47:49

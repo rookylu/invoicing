@@ -1,0 +1,25 @@
+%dl
+  %dt Name:
+  %dd= h @company.name
+
+  %dt Phone number:
+  %dd= h @company.phone_number 
+
+  %dt Email address:
+  %dd= h @company.email_address
+
+  %dt Url:
+  %dd= h @company.url 
+
+  %dt Address:
+  %dd= h @company.address
+
+  %dt Vat number:
+  %dd= h @company.vat_number 
+
+  %dt Logo:
+  %dd= image_tag @company.logo.url
+
+= link_to 'Edit', edit_company_path(@company) 
+|
+= link_to 'Back', companies_path 

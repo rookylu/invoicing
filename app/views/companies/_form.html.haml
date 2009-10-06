@@ -1,0 +1,26 @@
+- form_for(@company, :html => { :multipart => true }) do |f| 
+  = f.error_messages 
+
+  %dl
+    %dt= f.label :name
+    %dd= f.text_field :name 
+
+    %dt= f.label :phone_number
+    %dd= f.text_field :phone_number
+
+    %dt= f.label :email_address 
+    %dd= f.text_field :email_address
+
+    %dt= f.label :url 
+    %dd= f.text_field :url
+
+    %dt= f.label :address 
+    %dd= f.text_area :address 
+
+    %dt= f.label :vat_number 
+    %dd= f.text_field :vat_number 
+
+    %dt= f.label :logo
+    %dd= f.file_field :logo
+
+    %dd= f.submit 'Save' 

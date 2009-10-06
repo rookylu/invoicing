@@ -1,0 +1,7 @@
+- case invoice.state
+- when 'proforma'
+  = link_to "Approve Proforma", approve_proforma_invoice_path(invoice), :class => 'button'
+- when 'invoice'
+  = link_to "Send to client", send_to_client_invoice_path(invoice), :class => 'button'
+- when 'sent'
+  = link_to "Mark as Paid", receive_payment_invoice_path(invoice), :class => 'button'

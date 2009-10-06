@@ -1,0 +1,51 @@
+%h2== Client: #{@client.name}
+
+%dl
+  %dt Abbreviated:
+  %dd= h @client.abbreviated
+  %dt Billing person:
+  %dd= h @client.billing_person 
+  %dt Phone number:
+  %dd= h @client.phone_number
+  %dt Address:
+  %dd= h @client.address
+  %dt Country:
+  %dd= h @client.country
+  %dt Vat number:
+  %dd= h @client.vat_number 
+  %dt Email address:
+  %dd= h @client.email_address
+
+= link_to 'Edit', edit_client_path(@client) |
+= link_to 'Back', clients_path
+
+- if @client.invoices.count > 0
+  %h3 Invoices for this client:
+  %table#client_invoices
+    %thead
+      %tr
+        %th Ident
+        %th Date Created
+        %th State
+        %th Num. Lines
+        %th Value
+        %th/
+        %th/
+        %th/
+
+    %tbody
+      - @invoices.each do |invoice|
+        %tr
+          %td= link_to invoice.ident, invoice
+          %td= h invoice.date.to_s(:standard)
+          %td= invoice.state_info
+          %td.right= invoice.num_lines
+          %td.right= format_price(invoice.total)
+          %td= link_to 'Edit', edit_invoice_path(invoice), :class => 'button'
+          %td= link_to 'Destroy', invoice, :confirm => 'Are you sure?', :method => :delete, :class => 'button'
+          %td= render :partial => 'invoices/state_action', :locals => { :invoice => invoice }
+    %tfoot
+      %tr
+        %td.centre{:colspan => 8}= will_paginate @invoices
+- else
+  %p This client has no invoices

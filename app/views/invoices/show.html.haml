@@ -1,0 +1,41 @@
+%h2 
+  Invoice: #{@invoice.ident} for 
+  = link_to @invoice.client.name, @invoice.client
+
+= flash_messages
+
+%dl
+  %dt Ident:
+  %dd= h @invoice.ident
+  %dt Date:
+  %dd= h @invoice.date.to_s(:standard)
+  %dt Status:
+  %dd= h @invoice.state_info
+
+- if @invoice.invoice_lines.count > 0
+  %table#invoice_products
+    %thead
+      %tr
+        %th Product
+        %th Unit Price
+        %th Quantity
+        %th Total Price
+        %th/
+    %tbody
+      - @invoice.invoice_lines.each do |product|
+        %tr
+          %td= link_to product.name, product.product
+          %td.right= format_price(product.price)
+          %td.right= product.quantity
+          %td.right= format_price(product.total)
+          %td= link_to 'Remove from invoice', invoice_invoice_line_path(@invoice, product), :confirm => 'Are you sure?', :method => :delete, :class => 'button'
+    %tfoot
+      %tr
+        %td.right.summary{:colspan => 2} Totals: 
+        %td.right= @invoice.num_lines
+        %td.right= format_price(@invoice.total)
+        %td/
+
+= link_to 'Edit', edit_invoice_path(@invoice) 
+|
+= link_to 'Back', invoices_path 

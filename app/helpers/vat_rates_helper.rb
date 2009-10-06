@@ -1,0 +1,2 @@
+module VatRatesHelper
+end
