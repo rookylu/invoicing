@@ -14,7 +14,7 @@
 #
 
 class Company < ActiveRecord::Base
-  has_attached_file :logo
+  has_attached_file :logo, :styles => { :thumb => ["100x100>", :jpg], :normal => ["200x200>", :jpg] }, :default_style => :thumb
 
   validates_attachment_content_type :logo, :content_type => ['image/tiff', 'image/svg.*', 'image/gif', 'image/jpg', 'image/jpeg', 'image/png'], :message => "Logo is not of an acceptable type"
 

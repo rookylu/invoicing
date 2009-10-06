@@ -1,24 +1,7 @@
-<h1>Editing invoice</h1>
+%h1 Editing invoice
 
-<% form_for(@invoice) do |f| %>
-  <%= f.error_messages %>
+= render :partial => 'form'
 
-  <p>
-    <%= f.label :ident %><br />
-    <%= f.text_field :ident %>
-  </p>
-  <p>
-    <%= f.label :date %><br />
-    <%= f.datetime_select :date %>
-  </p>
-  <p>
-    <%= f.label :date_sent %><br />
-    <%= f.datetime_select :date_sent %>
-  </p>
-  <p>
-    <%= f.submit 'Update' %>
-  </p>
-<% end %>
-
-<%= link_to 'Show', @invoice %> |
-<%= link_to 'Back', invoices_path %>
+= link_to 'Show', @invoice 
+|
+= link_to 'Back', invoices_path 

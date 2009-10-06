@@ -1,11 +1,14 @@
 class InvoicesController < ApplicationController
   def index
+    params[:state] ||= 'invoice'
     @invoices = case params[:state]
                 when 'proforma'
                   Invoice.proformas.paginate :page => params[:page]
                 else
                   Invoice.invoices.paginate :page => params[:page]
                 end
+    @page_type = params[:state].capitalize
+    @page_title = @page_type.pluralize
   end
 
   def show
@@ -17,6 +20,7 @@ class InvoicesController < ApplicationController
 
   def new
     @invoice = Invoice.new
+    @clients = Client.all
   end
 
   def edit

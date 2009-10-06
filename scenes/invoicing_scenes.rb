@@ -12,8 +12,8 @@ set_scene("VAT rates") do
   VatRate.make(:vat_rate => 1175, :effective_from => DateTime.parse('2010-01-01'))
 end
 
-set_scene("Lots of Companies") do
-  10.times do
+set_scene("50 Companies") do
+  50.times do
     Company.make
   end
 end
@@ -30,13 +30,13 @@ set_scene("20 Clients") do
   end
 end
 
-set_scene("Lots of Invoices") do
+set_scene("200 Invoices") do
   200.times do
     Invoice.make
   end
 end
 
-set_scene("Lots of InvoiceLines") do
+set_scene("400 InvoiceLines") do
   400.times do
     InvoiceLine.make
   end
@@ -58,9 +58,6 @@ end
 
 set_scene("A lot of data") do
   get_scene("VAT rates").play
-  get_scene("Lots of Companies").play
-  #get_scene("Lots of Products").play
-  get_scene("Lots of Clients").play
-  #get_scene("Lots of Invoices").play
-  get_scene("Lots of InvoiceLines").play
+  get_scene("50 Companies").play
+  get_scene("20 clients each with 30 invoices").play
 end

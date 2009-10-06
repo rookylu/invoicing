@@ -1,7 +1,7 @@
 - content_for :title do
-  Listing Invoices
+  = "Listing #{@page_title}"
 
-%h2 Listing invoices
+%h2= "Listing #{@page_title}"
 
 %table
   %thead
@@ -32,4 +32,4 @@
     %tr
       %td.centre{:colspan => 9}= will_paginate @invoices
 
-= link_to 'New invoice', new_invoice_path 
+= link_to "New #{@page_type}", new_invoice_path 

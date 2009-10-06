@@ -9,18 +9,24 @@
       %th Url
       %th Address
       %th Vat number
+      %th/
+      %th/
+      %th/
 
   %tbody
     - @companies.each do |company|
       %tr
-        %td= h company.name
+        %td= link_to company.name, company
         %td= h company.phone_number 
         %td= h company.email_address 
         %td= h company.url 
         %td= h company.address 
         %td= h company.vat_number 
-        %td= link_to 'Show', company 
-        %td= link_to 'Edit', edit_company_path(company) 
-        %td= link_to 'Destroy', company, :confirm => 'Are you sure?', :method => :delete 
+        %td= link_to 'Show', company, :class => :button
+        %td= link_to 'Edit', edit_company_path(company), :class => :button 
+        %td= link_to 'Destroy', company, :confirm => 'Are you sure?', :method => :delete, :class => :button
+  %tfoot
+    %tr
+      %td.centre{:colspan => 9}= will_paginate( @companies, :page => params[:page] )
 
 = link_to 'New company', new_company_path
