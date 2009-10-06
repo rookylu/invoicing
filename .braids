@@ -18,6 +18,13 @@ vendor/plugins/machinist:
   type: git
   revision: 3b2a729f0bb1723f50ad2ffc819bbcd18626130e
   remote: braid/vendor/plugins/machinist
+vendor/plugins/paperclip: 
+  squashed: true
+  url: git://github.com/thoughtbot/paperclip.git
+  branch: master
+  type: git
+  revision: d6ebd321c801e88a173dd5f929db36db05373893
+  remote: braid/vendor/plugins/paperclip
 vendor/plugins/will_paginate: 
   squashed: true
   branch: master
