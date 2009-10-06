@@ -12,6 +12,7 @@ Sham.address { Faker::Address.street_address }
 Sham.vat_number { |x| "UK%08d" % x }
 Sham.company_name { Faker::Company.name }
 Sham.product_name { Faker::Lorem.sentence }
+Sham.price(:unique => false) { rand(50000) + 1 }
 
 VatRate.blueprint do
   name { Sham.title }
@@ -27,17 +28,30 @@ end
 
 Client.blueprint do
   name { Sham.company_name }
-  abbreviated { name.slice(0,2) }
+  abbreviated { name.slice(0,2).upcase }
   email_address { Sham.email }
+  country 'United Kingdom'
   vat_number
+  phone_number
   billing_person { Sham.name }
 end
 
 Product.blueprint do
   name { Sham.product_name }
+  price 
+  details { Sham.body }
 end
 
 Invoice.blueprint do
-  client { Client.first || Client.make }
-  ident { |x| "#{client.abbreviated}#{DateTime.now}-%02d" % x }
+  client { Client.make }
+  ident { "#{client.abbreviated}#{Date.today.to_s(:yearonly).gsub(/-/,'')}-%02d" % (rand(99) + 1) }
+  state 'proforma'
+  date { Date.today - rand(100) }
+end
+
+InvoiceLine.blueprint do
+  invoice { Invoice.make }
+  product { Product.make }
+  price
+  quantity { rand(10) + 1 }
 end

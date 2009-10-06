@@ -1,35 +1,21 @@
-<h1>New company</h1>
+%h1 New company
 
-<% form_for(@company) do |f| %>
-  <%= f.error_messages %>
+- form_for(@company) do |f|
+  = f.error_messages
 
-  <p>
-    <%= f.label :name %><br />
-    <%= f.text_field :name %>
-  </p>
-  <p>
-    <%= f.label :phone_number %><br />
-    <%= f.text_field :phone_number %>
-  </p>
-  <p>
-    <%= f.label :email_address %><br />
-    <%= f.text_field :email_address %>
-  </p>
-  <p>
-    <%= f.label :url %><br />
-    <%= f.text_field :url %>
-  </p>
-  <p>
-    <%= f.label :address %><br />
-    <%= f.text_area :address %>
-  </p>
-  <p>
-    <%= f.label :vat_number %><br />
-    <%= f.text_field :vat_number %>
-  </p>
-  <p>
-    <%= f.submit 'Create' %>
-  </p>
-<% end %>
+  %dl
+    %dt= f.label :name
+    %dd= f.text_field :name 
+    %dt= f.label :phone_number 
+    %dd= f.text_field :phone_number 
+    %dt= f.label :email_address
+    %dd= f.text_field :email_address 
+    %dt= f.label :url
+    %dd= f.text_field :url
+    %dt= f.label :address 
+    %dd= f.text_area :address 
+    %dt= f.label :vat_number
+    %dd= f.text_field :vat_number 
+    %dt= f.submit 'Create'
 
-<%= link_to 'Back', companies_path %>
+= link_to 'Back', companies_path 

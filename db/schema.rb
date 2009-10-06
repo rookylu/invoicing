@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090924214749) do
+ActiveRecord::Schema.define(:version => 20091006160415) do
 
   create_table "client_groups", :force => true do |t|
     t.string   "name"
@@ -39,16 +39,30 @@ ActiveRecord::Schema.define(:version => 20090924214749) do
     t.string   "vat_number"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "logo_file_name"
+    t.string   "logo_content_type"
+    t.integer  "logo_file_size"
+  end
+
+  create_table "invoice_lines", :force => true do |t|
+    t.integer  "invoice_id"
+    t.integer  "product_id"
+    t.integer  "price"
+    t.integer  "quantity"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "invoices", :force => true do |t|
     t.string   "ident"
-    t.datetime "date"
     t.datetime "date_sent"
-    t.integer  "client_id"
+    t.datetime "date_approved"
+    t.datetime "date_paid"
+    t.datetime "date"
+    t.integer  "client_id",                  :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "state",      :limit => 0, :null => false
+    t.string   "state",         :limit => 0, :null => false
   end
 
   create_table "products", :force => true do |t|

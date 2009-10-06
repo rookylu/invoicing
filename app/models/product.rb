@@ -11,4 +11,6 @@
 #
 
 class Product < ActiveRecord::Base
+  has_many :invoice_lines
+  has_many :invoices, :through => :invoice_lines
 end

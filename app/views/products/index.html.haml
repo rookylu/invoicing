@@ -3,22 +3,23 @@
 %table
   %thead
     %tr
-    %th Name
-    %th Price
-    %th Details
+      %th Name
+      %th Price
+      %th Details
+      %th/
+      %th/
 
   %tbody
     - @products.each do |product|
       %tr
-        %td=h product.name
-        %td=h product.price 
+        %td= link_to product.name, product
+        %td= format_price(product.price)
         %td=h product.details 
-        %td= link_to 'Show', product
-        %td= link_to 'Edit', edit_product_path(product)
-        %td= link_to 'Destroy', product, :confirm => 'Are you sure?', :method => :delete
+        %td= link_to 'Edit', edit_product_path(product), :class => 'button'
+        %td= link_to 'Destroy', product, :confirm => 'Are you sure?', :method => :delete, :class => 'button'
 
   %tfoot
     %tr
-      %td.centre{:colspan => 6}= will_paginate @products
+      %td.centre{:colspan => 5}= will_paginate @products
 
 = link_to 'New product', new_product_path 

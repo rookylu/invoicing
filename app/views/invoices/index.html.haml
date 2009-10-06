@@ -7,17 +7,29 @@
   %thead
     %tr
       %th Ident
-      %th Date
-      %th Date sent
+      %th Client
+      %th Date Created
+      %th State
+      %th Num. Lines
+      %th Value
+      %th/
+      %th/
+      %th/
 
   %tbody
     - @invoices.each do |invoice|
       %tr
-        %td=h invoice.ident
-        %td=h invoice.date
-        %td=h invoice.date_sent
-        %td= link_to 'Show', invoice 
-        %td= link_to 'Edit', edit_invoice_path(invoice)
-        %td= link_to 'Destroy', invoice, :confirm => 'Are you sure?', :method => :delete
+        %td= link_to invoice.ident, invoice
+        %td= link_to invoice.client.name, invoice.client
+        %td= h invoice.date.to_s(:standard)
+        %td= invoice.state_info
+        %td.right= invoice.num_lines
+        %td.right= format_price(invoice.total)
+        %td= link_to 'Edit', edit_invoice_path(invoice), :class => 'button'
+        %td= link_to 'Destroy', invoice, :confirm => 'Are you sure?', :method => :delete, :class => 'button'
+        %td= link_to 'Send to client', send_to_client_invoice_path(invoice), :class => 'button'
+  %tfoot
+    %tr
+      %td.centre{:colspan => 9}= will_paginate @invoices
 
 = link_to 'New invoice', new_invoice_path 

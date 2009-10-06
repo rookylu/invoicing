@@ -1,85 +1,78 @@
 class InvoicesController < ApplicationController
-  # GET /invoices
-  # GET /invoices.xml
   def index
-    @invoices = Invoice.all
-
-    respond_to do |format|
-      format.html # index.html.erb
-      format.xml  { render :xml => @invoices }
-    end
+    @invoices = case params[:state]
+                when 'proforma'
+                  Invoice.proformas.paginate :page => params[:page]
+                else
+                  Invoice.invoices.paginate :page => params[:page]
+                end
   end
 
-  # GET /invoices/1
-  # GET /invoices/1.xml
   def show
     @invoice = Invoice.find(params[:id])
-
-    respond_to do |format|
-      format.html # show.html.erb
-      format.xml  { render :xml => @invoice }
+    if @invoice.invoice_lines.count == 0
+      flash.now[:notice] = "There are no products added to this invoice"
     end
   end
 
-  # GET /invoices/new
-  # GET /invoices/new.xml
   def new
     @invoice = Invoice.new
-
-    respond_to do |format|
-      format.html # new.html.erb
-      format.xml  { render :xml => @invoice }
-    end
   end
 
-  # GET /invoices/1/edit
   def edit
     @invoice = Invoice.find(params[:id])
   end
 
-  # POST /invoices
-  # POST /invoices.xml
   def create
     @invoice = Invoice.new(params[:invoice])
 
     respond_to do |format|
       if @invoice.save
-        flash[:notice] = 'Invoice was successfully created.'
+        flash.now[:notice] = 'Invoice was successfully created.'
         format.html { redirect_to(@invoice) }
-        format.xml  { render :xml => @invoice, :status => :created, :location => @invoice }
       else
         format.html { render :action => "new" }
-        format.xml  { render :xml => @invoice.errors, :status => :unprocessable_entity }
       end
     end
   end
 
-  # PUT /invoices/1
-  # PUT /invoices/1.xml
   def update
     @invoice = Invoice.find(params[:id])
 
     respond_to do |format|
       if @invoice.update_attributes(params[:invoice])
-        flash[:notice] = 'Invoice was successfully updated.'
+        flash.now[:notice] = 'Invoice was successfully updated.'
         format.html { redirect_to(@invoice) }
-        format.xml  { head :ok }
       else
         format.html { render :action => "edit" }
-        format.xml  { render :xml => @invoice.errors, :status => :unprocessable_entity }
       end
     end
   end
 
-  # DELETE /invoices/1
-  # DELETE /invoices/1.xml
   def destroy
     @invoice = Invoice.find(params[:id])
     @invoice.destroy
 
     respond_to do |format|
       format.html { redirect_to(invoices_url) }
-      format.xml  { head :ok }
     end
+  end
+
+  def approve_proforma
+    @invoice = Invoice.find(params[:id])
+    @invoice.approved!
+    redirect_to(@invoice)
+  end
+
+  def send_to_client
+    @invoice = Invoice.find(params[:id])
+    @invoice.send_to_client!
+    redirect_to(@invoice)
+  end
+
+  def receive_payment
+    @invoice = Invoice.find(params[:id])
+    @invoice.receive_payment!
+    redirect_to(@invoice)
   end
 end
