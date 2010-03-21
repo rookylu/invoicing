@@ -14,7 +14,7 @@ class InvoicesController < ApplicationController
   def show
     @invoice = Invoice.find(params[:id])
     if @invoice.invoice_lines.count == 0
-      flash.now[:notice] = "There are no products added to this invoice"
+      flash.now[:info] = "There are no products added to this invoice"
     end
   end
 
@@ -30,13 +30,12 @@ class InvoicesController < ApplicationController
   def create
     @invoice = Invoice.new(params[:invoice])
 
-    respond_to do |format|
-      if @invoice.save
-        flash.now[:notice] = 'Invoice was successfully created.'
-        format.html { redirect_to(@invoice) }
-      else
-        format.html { render :action => "new" }
-      end
+    if @invoice.save
+      flash.now[:notice] = 'Invoice was successfully created.'
+      redirect_to(@invoice)
+    else
+      flash.now[:error] = "There were problems saving this invoice"
+      render :action => "new"
     end
   end
 

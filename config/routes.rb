@@ -5,9 +5,10 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :clients do |client|
     client.resources :invoices
   end
-  map.resources :vat_rates
+  map.resources :dashboard
+  map.resources :admin
   map.resources :client_groups
   map.resources :companies
   map.resources :products
-  map.root :controller => "invoices"
+  map.root :controller => "dashboard"
 end

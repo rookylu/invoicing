@@ -1,0 +1,22 @@
+- content_for :title do
+  Admin
+
+%h2 Admin
+
+%h3 VAT Rates
+
+%table#vat_rates
+  %thead
+    %th Effective From
+    %th Effective To
+    %th Rate
+  %tbody
+    - @vat_rates.each do |rate|
+      %tr
+        %td= rate.effective_from
+        %td= rate.effective_to
+        %td= rate.vat_rate
+  %tfoot
+    - unless @vat_rates.total_pages == 1
+      %tr
+        %td{:colspan => 3}= will_paginate @vat_rates

@@ -29,7 +29,9 @@
         %td= link_to 'Destroy', invoice, :confirm => 'Are you sure?', :method => :delete, :class => 'button'
         %td= link_to 'Send to client', send_to_client_invoice_path(invoice), :class => 'button'
   %tfoot
-    %tr
-      %td.centre{:colspan => 9}= will_paginate @invoices
+    - unless @invoices.total_pages == 1
+      %tr
+        %td.centre{:colspan => 9}= will_paginate @invoices
+
 
 = link_to "New #{@page_type}", new_invoice_path 

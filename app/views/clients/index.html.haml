@@ -18,7 +18,8 @@
         %td= link_to 'Edit', edit_client_path(client), :class => 'button'
         %td= link_to 'Destroy', client, :confirm => 'Are you sure?', :method => :delete, :class => 'button'
   %tfoot
-    %tr
-      %td.centre{:colspan => 5}= will_paginate @clients
+    - unless @clients.total_pages == 1
+      %tr
+        %td.centre{:colspan => 5}= will_paginate @clients
 
 = link_to 'New client', new_client_path 

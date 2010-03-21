@@ -11,3 +11,5 @@ document.sh
 docs/
 html/
 build/
+*.html
+public/system/

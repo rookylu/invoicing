@@ -13,7 +13,6 @@ Sham.vat_number { |x| "UK%08d" % x }
 Sham.company_name { Faker::Company.name }
 Sham.product_name { Faker::Lorem.sentence }
 Sham.price(:unique => false) { rand(50000) + 1 }
-Sham.logo { File.new(Dir.glob("/Library/User Pictures/*/*.tif").rand) }
 
 VatRate.blueprint do
   name { Sham.title }
@@ -25,7 +24,7 @@ Company.blueprint do
   vat_number
   url
   phone_number
-  logo
+  logo TempLogo.create_logo(name)
 end
 
 Client.blueprint do

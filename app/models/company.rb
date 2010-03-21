@@ -14,8 +14,12 @@
 #
 
 class Company < ActiveRecord::Base
-  has_attached_file :logo, :styles => { :thumb => ["100x100>", :jpg], :normal => ["200x200>", :jpg] }, :default_style => :thumb
+  has_attached_file :logo, :styles => { :thumb => ["100x100>", :jpg], :normal => ["200x200>", :jpg] }, :default_style => :normal
 
-  validates_attachment_content_type :logo, :content_type => ['image/tiff', 'image/svg.*', 'image/gif', 'image/jpg', 'image/jpeg', 'image/png'], :message => "Logo is not of an acceptable type"
+  validates_attachment_content_type :logo, :content_type => ['image/svg.*', 'image/gif', 'image/jpg', 'image/jpeg', 'image/png'], :message => "Logo is not of an acceptable type"
 
+
+  validates_presence_of :name, :vat_number
+  validates_uniqueness_of :name
+  validates_uniqueness_of :vat_number
 end

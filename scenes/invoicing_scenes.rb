@@ -12,6 +12,11 @@ set_scene("VAT rates") do
   VatRate.make(:vat_rate => 1175, :effective_from => DateTime.parse('2010-01-01'))
 end
 
+set_scene("one company and one client") do
+  Company.make
+  Client.make(:name => 'Example Client')
+end
+
 set_scene("50 Companies") do
   50.times do
     Company.make
@@ -30,9 +35,15 @@ set_scene("20 Clients") do
   end
 end
 
+set_scene("100 Proformas") do
+  100.times do
+    Invoice.make(:state => 'proforma')
+  end
+end
+
 set_scene("200 Invoices") do
   200.times do
-    Invoice.make
+    Invoice.make(:state => 'invoice')
   end
 end
 
